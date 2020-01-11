@@ -34,12 +34,13 @@ class MaxHeap {
             return false;
         }
         Node newNode = new Node(key);
-        heapArray[currentSize] = newNode;
+        heapArray[currentSize] = newNode;System.out.println("inserting " + key);
         trickleUp(currentSize++);
         return true;
     }
 
     public void trickleUp(int index) {
+        System.out.println("" + index);
         int parentIndex = (index-1) / 2;
         Node currentNode = heapArray[index];
         while(index > 0 && heapArray[parentIndex].getKey() < currentNode.getKey()) {
@@ -50,14 +51,31 @@ class MaxHeap {
         heapArray[index] = currentNode;
     }
 
+    // same as the tricleUp method
+    public void recursiveTricleUp (int index) {
+        if (index <= 0) {
+            System.out.println("quit1");
+            return;
+        }
+        int parentIndex = (index-1) / 2;
+        if( heapArray[parentIndex].getKey() > heapArray[index].getKey() ) {
+            return;
+        }
+        int temp = heapArray[index].getKey();
+        heapArray[index].setKey(heapArray[parentIndex].getKey());
+        heapArray[parentIndex].setKey(temp);
+        recursiveTricleUp(parentIndex);
+    }
+
     // remove the root,took the last element at root element position and checking down
     public Node remove() {
         Node root = heapArray[0];
         heapArray[0] = heapArray[--currentSize];
-        trickleDown(0);
+        //trickleDown(0);
+        recursiveTricleDown(0);
         return root;
     }
-    
+
     public void trickleDown(int index) {
         int largerChild;
         Node currentNode = heapArray[index];
@@ -83,6 +101,30 @@ class MaxHeap {
         } // end while
         heapArray[index] = currentNode;
     } // end trickleDown()
+
+    public void recursiveTricleDown (int index) {
+        // run till have at least one childs
+        if( (index*2+1) >= currentSize) {
+            return;
+        }
+        Node currentNode = heapArray[index];
+        int largerChildIndex;
+        int leftChildIndex = index*2 + 1;
+        int rightChildIndex = leftChildIndex + 1;
+        if (rightChildIndex < currentSize && heapArray[leftChildIndex].getKey() >= heapArray[rightChildIndex].getKey()) {
+            largerChildIndex = leftChildIndex;
+        } else {
+            largerChildIndex = rightChildIndex;
+        }
+        
+        if (currentNode.getKey() >= heapArray[largerChildIndex].getKey()) {
+            return;
+        }
+        // shift up largerchild to its parent position
+        heapArray[index] = heapArray[largerChildIndex];
+        heapArray[largerChildIndex] = currentNode;
+        recursiveTricleDown(largerChildIndex);
+    }
 
     public boolean change(int index, int newValue) {
         if (index < 0 || index >= currentSize) {
@@ -149,19 +191,28 @@ public class MainDriver {
         int value, value2;
         MaxHeap theHeap = new MaxHeap(31); // make a Heap; max size 31
         boolean success;
-        theHeap.insert(70);
-        theHeap.insert(40);
-        theHeap.insert(50);
-        theHeap.insert(20);
-        theHeap.insert(60);
-        theHeap.insert(100);
-        theHeap.insert(80);
-        theHeap.insert(30);
-        theHeap.insert(10);
+        theHeap.insert(70);       // theHeap.displayHeap();
+
+        theHeap.insert(40);       // theHeap.displayHeap();
+
+        theHeap.insert(50);        //theHeap.displayHeap();
+
+        theHeap.insert(20);       // theHeap.displayHeap();
+
+        theHeap.insert(60);       // theHeap.displayHeap();
+
+        theHeap.insert(100);       // theHeap.displayHeap();
+
+        theHeap.insert(80);       // theHeap.displayHeap();
+
+        theHeap.insert(30);       // theHeap.displayHeap();
+
+        theHeap.insert(10);       // theHeap.displayHeap();
+
         theHeap.insert(90);
         theHeap.displayHeap();
-//        theHeap.remove();
-//        theHeap.displayHeap();
+        theHeap.remove();
+        theHeap.displayHeap();
 //        theHeap.change(3, 65);
 //        theHeap.displayHeap();
     }

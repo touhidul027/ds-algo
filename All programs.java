@@ -1,6 +1,7 @@
 Dynamic Programming
 -------------------
 //implementing Rod cutting algorithm : top-down approach
+Program : A
 package ds_algo_github;
 
     class CutRodDyanamic {
@@ -51,3 +52,218 @@ public class MainDriver {
     }
 }
 //END : implementing Rod cutting algorithm : top-down approach
+
+program B : 
+//implementing Rod cutting algorithm : bottom-up approach
+package ds_algo_github;
+
+    class CutRodDyanamic {
+        int[] profitArr;
+        int length;
+        int[] revenuArr;
+
+        public CutRodDyanamic(int[] profitArr, int len) {
+            this.length = len;
+            this.profitArr = new int[len+1];
+            this.revenuArr = new int[len+1];
+            for(int i=1; i<= this.length; i++) {
+                this.profitArr[i] = profitArr[i];
+            }
+        }
+        public void cutRod () {
+            for (int i = 0; i <= this.length; i++) {
+                this.revenuArr[i] = -1;
+            }
+            int maxProfit = this.bottomUpCutRod(this.length);
+            System.out.println("Maxprofit : " + maxProfit);
+        }
+        public int bottomUpCutRod (int currentLength) {
+            this.revenuArr[0] = 0;
+            for (int i = 1; i<= currentLength; i++) {
+                int maxLengthRevenue = -1;
+                for (int j = 1; j <= i; j++) {
+                    int a = this.profitArr[j];
+                    int b = this.revenuArr[i-j];
+                    if (maxLengthRevenue < (a+b)) {
+                        maxLengthRevenue = a + b;
+                    }
+                }
+                this.revenuArr[i] = maxLengthRevenue;
+            }
+            return this.revenuArr[currentLength];
+        }
+    }
+public class MainDriver {
+    public static void main(String[] agrs) {
+        int[] arr = {0,1,5,8,9};
+        CutRodDyanamic obj = new CutRodDyanamic( arr, 4);
+        obj.cutRod();
+    }
+}
+B: END:
+
+Program C: 
+//implementing Rod cutting algorithm : extended - bottom-up approach
+package ds_algo_github;
+
+    class CutRodDyanamic {
+        private int[] profitArr;
+        private int length;
+        private int[] revenuArr;
+        private int[] unitsCutPosition;
+
+        public CutRodDyanamic(int[] profitArr, int len) {
+            this.length = len;
+            this.profitArr = new int[len+1];
+            this.revenuArr = new int[len+1];
+            this.unitsCutPosition= new int[len+1];
+            for(int i=1; i<= this.length; i++) {
+                this.profitArr[i] = profitArr[i];
+            }
+        }
+        public void cutRod () {
+            for (int i = 0; i <= this.length; i++) {
+                this.revenuArr[i] = -1;
+            }
+            this.extendedBottomUpCutRod(this.length);
+        }
+        public void extendedBottomUpCutRod (int units) {
+            this.revenuArr[0] = 0;
+            for (int unit = 1; unit<= units; unit++) {
+                int unitRevenue = -1;
+                int unitsCuttingPoint = -1;
+                for (int j = 1; j <= unit; j++) {
+                    int a = this.profitArr[j];
+                    int b = this.revenuArr[unit-j];
+                    if (unitRevenue < (a+b)) {
+                        unitRevenue = a + b;
+                        unitsCuttingPoint = j;
+                    }
+                }
+                this.revenuArr[unit] = unitRevenue;
+                this.unitsCutPosition[unit] = unitsCuttingPoint;
+            }
+        }
+        public void printSolution (int nUnits) {
+            int n = nUnits;
+            while (n > 0) {
+                System.out.println("Cut units: " + this.unitsCutPosition[n]);
+                n = n - this.unitsCutPosition[n];
+            }
+            System.out.println("Maximum profit: " + this.revenuArr[nUnits]);
+        } 
+    }
+public class MainDriver {
+    public static void main(String[] agrs) {
+        int[] arr = {0,1,5,8,9};
+        CutRodDyanamic obj = new CutRodDyanamic( arr, 4);
+        obj.cutRod();
+        obj.printSolution(4);
+    }
+}
+C: END
+
+Program D:
+Fibonnaci Series using Dynamic problem
+package ds_algo_github;
+
+class Fibonacci {
+    private int[] series;
+
+    public Fibonacci (int n) {
+        series = new int[n];
+        for (int i = 2; i < n; i++) {
+            series[i] = -1;
+        }
+        series[0] = 0;
+        series[1] = 1;
+    }
+
+    public int fibonacci (int nthTerm) {
+        if (series[nthTerm] >= 0) {
+            return series[nthTerm];
+        }
+        int result = fibonacci(nthTerm-1) + fibonacci(nthTerm-2);
+        series[nthTerm] = result;
+        return result;
+    }
+    public void printSeries(int nthTerm) {
+        for (int i = 0; i < nthTerm; i++) {
+            System.out.print( series[i] + " ");
+        }
+    }
+}
+
+public class MainDriver {
+    public static void main(String[] agrs) {
+        Fibonacci fib  = new Fibonacci(50);
+        fib.fibonacci(10);
+        fib.printSeries(10);
+    }
+}
+END:
+
+Program E:
+Longest common subsequence : Top down approach(CS Dojo)
+package ds_algo_github;
+
+//top down approach
+class LongestCommonSubsequence {
+    char[] a;
+    char[] b;
+    private int[][] ab;
+    private int len_a;
+    private int len_b;
+    
+    public LongestCommonSubsequence(String str1,String str2) {
+        this.a = str1.toCharArray();
+        this.b = str2.toCharArray();
+        this.len_a = str1.length();
+        this.len_b = str2.length();
+        this.ab = new int[this.len_a+1][this.len_b+1];
+        for (int i = 0; i <= this.len_a; i++) {
+            for (int j = 0; j <= this.len_b; j++) {
+                if (i ==0 || j == 0) {
+                    this.ab[i][j] = 0;
+                } else {
+                    this.ab[i][j] = -1;
+                }
+            }
+        }
+    }
+    private int lcs() {
+        return lcsAux(this.a,this.b,this.len_a,this.len_b);
+    }
+    private int lcsAux(char[] a,char[] b, int lenA, int lenB) {
+        System.out.println("for " + lenA + "" + lenB);
+        if(ab[lenA][lenB] >= 0) {
+            System.out.println("known "+ lenA +""+ lenB +" " + ab[lenA][lenB] );
+            return ab[lenA][lenB];
+        }
+        int result = 0;
+        if( lenA == 0 || lenB == 0) {
+            result = 0;
+        }else if (a[lenA-1] == b[lenB-1]) {
+            System.out.println("1 ->" + result);
+            result = 1 + lcsAux(a,b,lenA-1,lenB-1);
+        } else {
+            System.out.println("unequal");
+            int tmp1 = lcsAux(a,b,lenA-1,lenB);
+            int tmp2 = lcsAux(a,b,lenA,lenB-1);
+            result = (tmp1 > tmp2) ? tmp1 : tmp2;
+            System.out.println("2 -> " + result);
+        }
+        this.ab[lenA][lenB] = result;
+        return result;
+    }
+    public void lcsLength() {
+        System.out.println(this.a + " " + this.b.toString() + " " + this.lcs());
+    }
+}
+
+public class MainDriver {
+    public static void main(String[] agrs) {
+        LongestCommonSubsequence obj  = new LongestCommonSubsequence("ABCSDE", "AdBxCxSxDxE");
+        obj.lcsLength();
+    }
+}

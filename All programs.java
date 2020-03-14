@@ -267,3 +267,97 @@ public class MainDriver {
         obj.lcsLength();
     }
 }
+END:
+
+Program F : Finding LongestCommonSubsequence
+//  using bottom-up approach
+package ds_algo_github;
+
+class LongestCommonSubsequence {
+    private char[] a;
+    private char[] b;
+    private char[] sequence;
+    private int[][] ab;
+    private int len_a;
+    private int len_b;
+
+    public LongestCommonSubsequence(String str1,String str2) {
+        this.a = str1.toCharArray();
+        this.b = str2.toCharArray();
+        this.len_a = str1.length();
+        this.len_b = str2.length();
+        this.ab = new int[this.len_a+1][this.len_b+1];
+        for (int i = 0; i <= this.len_a; i++) {
+            for (int j = 0; j <= this.len_b; j++) {
+                if (i ==0 || j == 0) {
+                    this.ab[i][j] = 0;
+                } else {
+                    this.ab[i][j] = -1;
+                }
+            }
+        }
+    }
+    public void lcsTable() {
+        lcsAux();
+        printLCSTable();
+    }
+    private int lcsAux() {
+        for (int i = 1; i <= this.len_a ; i++) {
+            for (int j = 1; j <= this.len_b; j++) {
+                int cellValue = 0;
+                if (this.a[i-1] == this.b[j-1]) {
+                    cellValue = this.ab[i-1][j-1] + 1;
+                } else if(this.ab[i][j-1] > this.ab[i-1][j]) {
+                    cellValue = this.ab[i][j-1];
+                } else {
+                    cellValue = this.ab[i-1][j];
+                }
+                this.ab[i][j] = cellValue;
+            }
+        }
+        return 0;
+    }
+    public void printLCSTable () {
+        for (int i = 0 ; i <= this.len_a; i++) {
+            for (int j = 0; j <= this.len_b; j++) {
+                System.out.print(this.ab[i][j] + " ");
+            }
+            System.out.println("");
+        }
+    }
+    public void printSequence() {
+        int maxSeqNums = this.ab[this.len_a][this.len_b];
+        int m = maxSeqNums;
+        this.sequence = new char[maxSeqNums];
+        System.out.println("Max: " + this.ab[this.len_a][this.len_b]);
+        int aLen = this.len_a;
+        int bLen = this.len_b;
+        while(this.ab[aLen][bLen]>0) {
+            int currentNumber  = this.ab[aLen][bLen];
+            int leftCellNumber = this.ab[aLen][bLen-1];
+            int topCellnumber = this.ab[aLen-1][bLen];
+            if (currentNumber  == topCellnumber) {
+                aLen--;
+            } else if(currentNumber == leftCellNumber) {
+                bLen--;
+            } else {
+                this.sequence[--maxSeqNums] = this.a[aLen-1];
+                aLen--;
+                bLen--;
+            }
+        }
+        System.out.print("Sequence is :");
+        for (int i = 0; i < m; i++) {
+            System.out.print(" " + this.sequence[i]);
+        }
+    }
+}
+public class MainDriver {
+    public static void main(String[] agrs) {
+        //LongestCommonSubsequence obj  = new LongestCommonSubsequence("abcbdab", "bdcaba");
+        LongestCommonSubsequence obj  = new LongestCommonSubsequence("bacdb", "bdcb");
+        obj.lcsTable();
+        obj.printSequence();
+        System.out.println("");
+    }
+}

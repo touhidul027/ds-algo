@@ -361,3 +361,70 @@ public class MainDriver {
         System.out.println("");
     }
 }
+
+Program 7: Longest Increasing subsequence
+// bottom-up approach
+package ds_algo_github;
+
+class LongestIncreasingSubsequence{
+    private int[] sequences;
+    private int[] LIS;
+    private int seqLen;
+    private int maxSequence;
+
+    public LongestIncreasingSubsequence(int[] sequences) {
+        this.sequences = sequences;
+        this.seqLen = sequences.length;
+        this.LIS = new int[this.seqLen];
+        for (int i = 0; i < this.seqLen; i++) {
+            this.LIS[i] = 1;
+        }
+    }
+    public void displaySequences() {
+        System.out.print("Sequences : ");
+        for(int i = 0; i < this.seqLen; i++) {
+            System.out.print(this.sequences[i]+ " ");
+        }
+    }
+    public void calculateLISMax() {
+        for(int i = 1; i < this.seqLen; i++) {
+            for (int j = 0; j < i; j++) {
+                if (this.sequences[j] < this.sequences[i]) {
+                    int temp = this.LIS[j] + 1;
+                    if (temp > this.LIS[i]) {
+                        this.LIS[i] = temp;
+                    }
+                }
+            }
+        }
+    }
+    public void displayLIS() {
+        System.out.print("\nLIS:");
+        for (int i = 0; i < this.seqLen; i++) {
+            System.out.print(" " + this.LIS[i]);
+        }
+    }
+    public void  displayMaxLength() {
+        // find the largest element from LIS array
+        int max = -1;
+        for (int i = 0; i < this.seqLen; i++) {
+            if(this.LIS[i] > max) {
+                max = this.LIS[i];
+            }
+        }
+        System.out.println("\nMax Length : " + max);
+    }
+}
+public class MainDriver {
+    public static void main(String[] agrs) {
+        int[] sequences = {5,3,6,4,7};
+        LongestIncreasingSubsequence lis = new LongestIncreasingSubsequence(sequences);
+        lis.calculateLISMax();
+        lis.displaySequences();
+        lis.displayLIS();
+        lis.displayMaxLength();
+        System.out.println("");
+    }
+}
+:END
+

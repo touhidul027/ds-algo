@@ -470,3 +470,87 @@ public class MainDriver {
     }
 }
 :END
+
+Program 8.1
+package ds_algo_github;
+
+// recursion  top-down approach
+class LongestPalindromeSubsequence {
+
+    public static int maxLPS(String str, int startIndex, int endIndex) {
+        if (startIndex > endIndex) {
+            return 0;
+        }
+        if (startIndex == endIndex) {
+            return 1;
+        }
+        int maxN;
+        if (str.charAt(startIndex) == str.charAt(endIndex)) {
+            maxN = maxLPS(str, startIndex + 1, endIndex - 1) + 2;
+        } else {
+            int a = maxLPS(str, startIndex + 1, endIndex);
+            int b = maxLPS(str, startIndex, endIndex - 1);
+            maxN = Integer.max(a, b);
+        }
+        return maxN;
+    }
+}
+
+public class MainDriver {
+
+    public static void main(String[] agrs) {
+        String X = "ABBDCACB";
+        int n = X.length();
+
+        System.out.print("Length of Longest Palindromic Subsequence :"
+                + LongestPalindromeSubsequence.maxLPS(X, 0, n-1));
+        System.out.println("");
+    }
+}
+:END
+
+Program 8.2
+package ds_algo_github;
+
+// recursion  top-down approach - memorized version
+import java.util.HashMap;
+import java.util.Map;
+
+class LongestPalindromeSubsequence {
+
+    public static int maxLPS(String str, int startIndex, int endIndex, Map<String, Integer> lookup) {
+        if (startIndex > endIndex) {
+            return 0;
+        }
+        if (startIndex == endIndex) {
+            return 1;
+        }
+        String key = startIndex + "|" + endIndex;
+        if (!lookup.containsKey(key)) {
+            int maxN;
+            if (str.charAt(startIndex) == str.charAt(endIndex)) {
+                maxN = maxLPS(str, startIndex + 1, endIndex - 1, lookup) + 2;
+            } else {
+                int a = maxLPS(str, startIndex + 1, endIndex, lookup);
+                int b = maxLPS(str, startIndex, endIndex - 1, lookup);
+                maxN = Integer.max(a, b);
+            }
+            lookup.put(key, maxN);
+        }
+        return lookup.get(key);
+    }
+}
+
+public class MainDriver {
+
+    public static void main(String[] agrs) {
+        String X = "ABCBAB";
+        int n = X.length();
+        Map<String, Integer> lookup = new HashMap<>();
+        System.out.print("Length of Longest Palindromic Subsequence :"
+                + LongestPalindromeSubsequence.maxLPS(X, 0, n - 1, lookup));
+        System.out.println("");
+    }
+}
+
+:END

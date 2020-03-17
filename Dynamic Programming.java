@@ -428,3 +428,45 @@ public class MainDriver {
 }
 :END
 
+problem 7.1
+LIS using recursion- top-down approach
+package ds_algo_github;
+
+// using recursion - top down-upapproach
+class LongestIncreasingSubsequence{
+    private int[] sequences;
+    private int seqLen;
+    private int maxSequence;
+
+    public LongestIncreasingSubsequence(int[] sequences) {
+        this.sequences = sequences;
+        this.seqLen = sequences.length;
+    }
+    public int calculateLISMax(int currentIndex,int previousElement) {
+        if (currentIndex == this.seqLen) {
+            return 0;
+        }
+        // case 1: exclude the current element and process the
+        // remaining elements
+        int a = this.calculateLISMax(currentIndex+1, previousElement);
+        int b = 0;
+        // case 2: include the current element if it is greater
+        // than previous element in LIS
+        if (this.sequences[currentIndex] > previousElement) {
+            b = 1 + this.calculateLISMax(currentIndex+1, this.sequences[currentIndex]);
+        }
+        return Integer.max(a, b);
+    }
+    public void displayLISLength() {
+        this.maxSequence = this.calculateLISMax(0, -100);
+        System.out.println("Max sequence is :" + this.maxSequence);
+    }
+}
+public class MainDriver {
+    public static void main(String[] agrs) {
+        int[] sequences = {0,8,4,12,2,10,6,14,1,9,5,13,3,11,7,15};
+        LongestIncreasingSubsequence lis = new LongestIncreasingSubsequence(sequences);
+        lis.displayLISLength();//6
+    }
+}
+:END

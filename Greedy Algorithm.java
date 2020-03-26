@@ -46,6 +46,24 @@ class ActivitySelection {
             key = this.activities[i];
         }
     }
+	// recursive implementation
+    public void selectActivitiesRec() {
+        this.selectedActivitiesnumber = 0;
+        Activity key = this.activities[this.selectedActivitiesnumber];
+        this.selectedActivities[this.selectedActivitiesnumber++] = key;
+        this.selectActivitiesRec(1, key.end);
+    }
+    private void selectActivitiesRec(int index, int previousEndTime) {
+        if (index == this.currentActivitiesNumber) {
+            return;
+        }
+        if (this.activities[index].start > previousEndTime) {
+            this.selectedActivities[this.selectedActivitiesnumber++] = this.activities[index];
+            previousEndTime = this.activities[index].end;
+        }
+        index++;  
+        this.selectActivitiesRec(index,previousEndTime);
+    }
     public void insert(Activity activity) {
         if (this.currentActivities == this.maxActivities) {
             System.out.println("No more insertion");
@@ -95,6 +113,8 @@ public class MainDriver {
         actSecObj.insert(new Activity(11, 12, 16));
         actSecObj.displayActivities();
         actSecObj.selectActivities();
+        actSecObj.displaySelectedActivities();
+		actSecObj.selectActivitiesRec();
         actSecObj.displaySelectedActivities();
     }
 }

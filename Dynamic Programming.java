@@ -637,3 +637,91 @@ public class MainDriver {
     }
 }
 :END
+
+Program 9.2 SnapSack dynamic
+// SnapSack 0|1 implemenation - dynamic recurisive - top down
+package ds_algo_github;
+
+import java.util.HashMap;
+import java.util.Map;
+
+class Item {
+    public int weight;
+    public int profit;
+    public Item(int weight, int profit) {
+        this.profit = profit;
+        this.weight = weight;
+    }
+
+    @Override
+    public String toString() {
+        return "{" + this.weight + ":" + this.profit + "}";
+    }
+}
+
+class SnapSack {
+    private Item[] items;
+    private int maxItemNumbers;
+    private int totalWeight;
+    private int currentItemsnumber;
+    private int maxProfit;
+    private Map<String,Integer> memorizedTable;
+
+    public SnapSack(int maxItemNumbers, int totalWeight) {
+        this.maxItemNumbers = maxItemNumbers;
+        this.totalWeight = totalWeight;
+        this.items = new Item[maxItemNumbers];
+        this.currentItemsnumber = 0;
+        this.memorizedTable = new HashMap<>();
+    }
+
+    public void insert (int weight, int profit) {
+        if (this.currentItemsnumber != this.maxItemNumbers) {
+            this.items[this.currentItemsnumber++] = new Item(weight, profit);
+        }
+    }
+
+    private int maxProfit (int remainingItems, int remainingTotalWeight) {
+        if (remainingTotalWeight < 0) {
+            return Integer.MIN_VALUE;
+        }
+        // base case
+        if(remainingItems == 0 || remainingTotalWeight == 0) {
+            return 0;
+        }
+        String key = remainingItems + ":" + remainingTotalWeight;
+        if (!this.memorizedTable.containsKey("key")) {
+            // include then recur
+            int p = this.items[remainingItems-1].profit ;
+            int a = this.maxProfit(remainingItems-1, remainingTotalWeight - this.items[remainingItems-1].weight);
+            int include = p + a;
+
+            // exclude then recur
+            int exclude = this.maxProfit(remainingItems-1, remainingTotalWeight);
+            this.memorizedTable.put(key, Integer.max(include, exclude));
+        }
+        return this.memorizedTable.get(key);
+    }
+
+    public void maxProfit() {
+        int max = this.maxProfit(this.currentItemsnumber, this.totalWeight);
+        this.maxProfit = max;
+    }
+
+    public void display() {
+        System.out.println("Max Profit is : " + this.maxProfit);
+    }
+}
+
+public class MainDriver {
+    public static void main(String[] agrs) {
+        SnapSack snapSack = new SnapSack(4, 8);
+        snapSack.insert(1, 2);
+        snapSack.insert(4, 3);
+        snapSack.insert(6, 1);
+        snapSack.insert(5, 4);
+        snapSack.maxProfit();
+        snapSack.display(); // 6
+    }
+}
+:END

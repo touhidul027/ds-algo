@@ -119,3 +119,109 @@ public class MainDriver {
     }
 }
 :END
+
+Program 2 : FractionalSnapsack
+// FractionalSnapSack implemenation - greedy algorithm
+// source: geekforgeeks
+package ds_algo_github;
+
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Map;
+
+class Item {
+    public int weight;
+    public int profit;
+    public Float perKgProfit;
+
+    public Item(int weight, int profit) {
+        this.profit = profit;
+        this.weight = weight;
+        this.perKgProfit = new Float(profit / weight);
+    }
+
+    @Override
+    public String toString() {
+        return "{" + this.weight + ":" + this.profit + "}";
+    }
+}
+
+class FractionalSnapSack {
+    private Item[] items;
+    private int maxItemNumbers;
+    private int totalWeight;
+    private int currentItemsnumber;
+    private int maxProfit;
+
+    public FractionalSnapSack(int maxItemNumbers, int totalWeight) {
+        this.maxItemNumbers = maxItemNumbers;
+        this.totalWeight = totalWeight;
+        this.items = new Item[maxItemNumbers];
+        this.currentItemsnumber = 0;
+    }
+    
+    public void insert (int weight, int profit) {
+        if (this.currentItemsnumber != this.maxItemNumbers) {
+            this.items[this.currentItemsnumber++] = new Item(weight, profit);
+        }
+    }
+    
+    public void maxProfit() {
+        this.sortItems();
+        int remainingWeight = this.totalWeight;
+        float fracProfit = 0;
+        for (int i= 0; remainingWeight > 0 && i< this.currentItemsnumber; i++) {
+           Item item = this.items[i];
+           float itemProfit;
+           if (item.weight > remainingWeight) {
+               // take only remaining  weight quantity from item
+               itemProfit = item.perKgProfit * remainingWeight;
+               remainingWeight = 0;
+           } else {
+               itemProfit = item.profit;
+               remainingWeight = remainingWeight - item.weight;
+           }
+           fracProfit += itemProfit;
+        }
+        this.maxProfit  = (int) fracProfit;
+    }
+    
+    public void display() {
+        System.out.println("Max Profit is : " + this.maxProfit);
+    }
+
+    private void sortItems() {
+//        Arrays.sort(this.items, 0, this.currentItemsnumber,
+//            new Comparator<Item>() {
+//                @Override
+//                public int compare(Item t, Item t1) {
+//                    return t1.perKgProfit.compareTo(t.perKgProfit);
+//                }               
+//            }
+//        );
+        Arrays.sort(this.items,  0, this.currentItemsnumber,(t, t1) -> t1.perKgProfit.compareTo(t.perKgProfit));
+    }
+    
+    public void displayItems() {
+        for (int i = 0; i < this.currentItemsnumber; i++) {
+            System.out.println(this.items[i]);
+        }
+    }
+}
+
+public class MainDriver {
+    public static void main(String[] agrs) {
+        FractionalSnapSack snapSack = new FractionalSnapSack(10, 15);
+        snapSack.insert(1, 5);
+        snapSack.insert(3, 10);
+        snapSack.insert(5, 15);
+        snapSack.insert(4, 7);
+        snapSack.insert(1, 8);
+        snapSack.insert(3, 9);
+        snapSack.insert(2, 4);
+        snapSack.maxProfit();
+        snapSack.display();// 51
+    }
+}
+:END

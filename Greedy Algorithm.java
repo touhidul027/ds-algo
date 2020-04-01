@@ -225,3 +225,161 @@ public class MainDriver {
     }
 }
 :END
+
+Program 3: Huffman coding
+package ds_algo_github;
+
+import java.io.*;
+import java.util.*;
+
+class HuffmanNode implements Comparable<Object> {
+
+    public String sData;//data item (key)
+    public Integer iData;//frequency of character
+    public HuffmanNode leftChild;
+    public HuffmanNode rightChild;
+
+    public void displayNode() {
+        System.out.print("{" + sData + ", " + iData + "}");
+    }
+
+    public int compareTo(Object o) {
+        HuffmanNode node = (HuffmanNode) o;
+        return (this.iData - node.iData);
+    }
+}
+
+class HuffmanTree {
+
+    private HuffmanNode root;//first node of tree
+    private String[] huffManPrefixCodeTable;
+    private String uniquePrefixCode;	//used to generate table with "0"s and "1"s
+
+    public HuffmanTree(String initString) {
+        uniquePrefixCode = new String();
+        huffManPrefixCodeTable = new String[128]; //going to keep it ASCII for simplicity
+        System.out.print("Initializing Huffman tree...");
+
+        //Find frequencies of each character in input string
+        HashMap<Character, Integer> map = new HashMap<Character, Integer>();
+        String s = initString;
+        for (int i = 0; i < s.length(); i++) {
+            char c = s.charAt(i);
+            Integer val = map.get(new Character(c));
+            if (val != null) {
+                map.put(c, new Integer(val + 1));
+            } else {
+                map.put(c, 1);
+            }
+        }
+
+        //Insert each character into a node and fill a priority queue with nodes
+        PriorityQueue<HuffmanNode> nodeQueue = new PriorityQueue<HuffmanNode>();
+        for (Map.Entry<Character, Integer> entry : map.entrySet()) {
+            String key = Character.toString(entry.getKey());
+            Integer value = entry.getValue();
+            HuffmanNode tempNode = new HuffmanNode();
+            tempNode.sData = key; //node contains character
+            tempNode.iData = value; //and frequency of character
+            nodeQueue.add(tempNode);
+        }
+
+        //Huffman Tree from priority  queue
+        while (nodeQueue.size() > 1) {
+            HuffmanNode temp1 = nodeQueue.remove();
+            HuffmanNode temp2 = nodeQueue.remove();
+            HuffmanNode newCombinedTree = new HuffmanNode();
+            newCombinedTree.iData = temp1.iData + temp2.iData;
+            newCombinedTree.leftChild = temp1;
+            newCombinedTree.rightChild = temp2;
+            nodeQueue.add(newCombinedTree);
+        }
+        //get 1 remaining node as root of entire tree
+        root = nodeQueue.remove();
+        System.out.println(" done");
+    }
+
+    public void createTable() {
+        createTable(root);
+    }
+
+    private void createTable(HuffmanNode localRoot) {
+        if (localRoot.sData != null) {
+            char ch = localRoot.sData.charAt(0);
+            int charASCIIValueToInt = (int) ch;
+            huffManPrefixCodeTable[charASCIIValueToInt] = uniquePrefixCode;
+            return;
+        } else {
+            uniquePrefixCode += "0";
+            createTable(localRoot.leftChild);
+            uniquePrefixCode = uniquePrefixCode.substring(0, uniquePrefixCode.length() - 1);
+
+            uniquePrefixCode += "1";
+            createTable(localRoot.rightChild);
+            uniquePrefixCode = uniquePrefixCode.substring(0, uniquePrefixCode.length() - 1);
+        }
+    }
+
+    // for encoding using huffman code is better 
+    public String encode(String message) {
+        String encodedResult = new String();
+        //fill result with codes for each letter of message
+        for (int i = 0; i < message.length(); i++) {
+            char ch = message.charAt(i);
+            int charASCIIValueToIntAsIndex = (int) ch;
+            encodedResult += huffManPrefixCodeTable[charASCIIValueToIntAsIndex];
+        }
+        return encodedResult;
+    }
+
+    // for decoding using huffman tree is better
+    public String decode(String codedMessage) {
+        String decodedResult = new String();
+        HuffmanNode temp = root;
+        int i = 0;
+        while (i < codedMessage.length()) {
+            if (temp.sData == null) {
+                if (codedMessage.charAt(i) == '0') {
+                    //System.out.println("going Left");
+                    temp = temp.leftChild;
+                } else if (codedMessage.charAt(i) == '1') {
+                    //System.out.println("going Right");
+                    temp = temp.rightChild;
+                }
+                i++;
+            } else {
+                //System.out.println("Found:" + temp.sData);
+                decodedResult += temp.sData;
+                temp = root;
+            }
+        }
+        //System.out.println(temp.sData);
+        decodedResult += temp.sData; //parse the last character
+        return decodedResult;
+    }
+} //end class HuffmanTree
+
+public class MainDriver {
+
+    public static void main(String[] agrs) throws IOException {
+        String originalString = "ABACA";
+        String encodedString = new String();
+        String decodedString = new String();
+        HuffmanTree theTree = new HuffmanTree(originalString); // huffman-tree built  
+        // create huffman prefix code Table
+        theTree.createTable();
+        System.out.println("Original String : " + originalString + " ,Length:" + originalString.length());
+        encodedString = theTree.encode(originalString);
+        System.out.println("Encoded String: " + encodedString + " ,Length:" + encodedString.length());
+        decodedString = theTree.decode(encodedString);
+        System.out.println("Decoded String: " + decodedString + " ,Length:" + decodedString.length());
+    }
+}
+/*
+output:
+Initializing Huffman tree... done
+Original String : ABACA ,Length:5
+Encoded String: 1001011 ,Length:7
+Decoded String: ABACA ,Length:5
+*/
+:END

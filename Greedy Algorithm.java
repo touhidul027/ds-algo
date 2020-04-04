@@ -383,3 +383,93 @@ Encoded String: 1001011 ,Length:7
 Decoded String: ABACA ,Length:5
 */
 :END
+
+Program 4: Job Sequence problem
+package ds_algo_github;
+
+import java.io.*;
+import java.util.*;
+
+class Task {
+
+    public int id;
+    public int deadLine;
+    public int profit;
+
+    public Task(int id, int deadLine, int profit) {
+        this.id = id;
+        this.deadLine = deadLine;
+        this.profit = profit;
+    }
+
+    @Override
+    public String toString() {
+        return "[" + this.id + " " + this.deadLine + " " + this.profit + "]";
+    }
+}
+
+class TaskScheduler {
+
+    private List<Task> tasks;
+    private int maxDeadLine;
+    private int[] slots;
+    private int maxProfits;
+    private List<Task> selectedTasks;
+
+    public TaskScheduler(List<Task> tasks, int maxDeadLine) {
+        this.tasks = tasks;
+        this.maxDeadLine = maxDeadLine;
+        this.slots = new int[maxDeadLine];
+        this.maxProfits = 0;
+        this.selectedTasks = new ArrayList<>();
+        Collections.sort(tasks, (i, j) -> j.profit - i.profit);
+        Arrays.fill(slots, -1);
+    }
+
+    public void scheduleTasks() {
+        this.maxProfits = 0;
+        for (Task task : tasks) {
+            for (int i = task.deadLine; task.deadLine <= maxDeadLine && i > 0; i--) {
+                if (this.slots[i - 1] == -1) {
+                    this.slots[i - 1] = task.id;
+                    this.maxProfits += task.profit;
+                    this.selectedTasks.add(task);
+                    break;
+                }
+            }
+        }
+        Collections.sort(this.selectedTasks, (i, j) -> i.deadLine - j.deadLine);
+    }
+
+    public void display() {
+        System.out.println("Max Profit : " + this.maxProfits);
+        for (Task task : this.selectedTasks) {
+            System.out.println(task);
+        }
+    }
+}
+
+public class MainDriver {
+
+    public static void main(String[] agrs) throws IOException {
+        List<Task> tasks = Arrays.asList(
+                new Task(1, 9, 15),
+                new Task(2, 2, 2),
+                new Task(3, 5, 18),
+                new Task(4, 7, 1),
+                new Task(5, 4, 25),
+                new Task(6, 2, 20),
+                new Task(7, 5, 8),
+                new Task(8, 7, 10),
+                new Task(9, 4, 12),
+                new Task(10, 3, 5)
+        );
+
+        // stores maximum deadline that can be associated with a job
+        int maxDeadLine = 15;
+        TaskScheduler taskScheduler = new TaskScheduler(tasks, maxDeadLine);
+        taskScheduler.scheduleTasks();
+        taskScheduler.display();
+    }
+}
+:END

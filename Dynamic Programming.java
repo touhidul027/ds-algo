@@ -725,3 +725,170 @@ public class MainDriver {
     }
 }
 :END
+
+Program 10. Coin change problem - unlimited supply - simple recursion , top down
+package ds_algo_github;
+
+import java.io.*;
+import java.util.*;
+
+/**
+ * Unlimited supply of coins
+ * i. include coin 
+ * ii. exclude coin 
+ * iii. Add both
+ */
+class CoinChange {
+
+    public static int countMax(int[] denominations, int availableCoinsNumber, int availableValue) {
+        if (availableValue == 0) {
+            return 1;
+        }
+        if (availableCoinsNumber == 0 || availableValue < 0) {
+            return 0;
+        }
+        int include = countMax(denominations, availableCoinsNumber, availableValue - denominations[availableCoinsNumber - 1]);
+        int exclude = countMax(denominations, availableCoinsNumber - 1, availableValue);
+        return include + exclude;
+    }
+}
+
+public class MainDriver {
+
+    public static void main(String[] agrs) throws IOException {
+        int[] denominations = {1, 2, 3};
+        int totalValue = 4;
+        int maxCount= CoinChange.countMax(denominations, denominations.length, totalValue);
+        System.out.println("Max Possible Count : " + maxCount);
+    }
+}
+:END
+
+Program 10.2  Coin change problem - unlimited supply - dynamic program, top down
+package ds_algo_github;
+
+import java.io.*;
+import java.util.*;
+
+/**
+ * Unlimited supply of coins
+ * Dynamic program
+ * i. include coin 
+ * ii. exclude coin 
+ * iii. Add both
+ */
+class CoinChange {
+
+    public static int countMax(int[] denominations, int availableCoinsNumber, int availableValue, Map<String,Integer> lookUpTable) {
+        if (availableValue == 0) {
+            return 1;
+        }
+        if (availableCoinsNumber == 0 || availableValue < 0) {
+            return 0;
+        }
+        String key = availableCoinsNumber + "|" + availableValue;
+        if (!lookUpTable.containsKey(key)) {
+            int include = countMax(denominations, availableCoinsNumber, availableValue - denominations[availableCoinsNumber - 1], lookUpTable);
+            int exclude = countMax(denominations, availableCoinsNumber - 1, availableValue, lookUpTable);
+            lookUpTable.put(key, (include + exclude));
+        }
+        return lookUpTable.get(key);
+    }
+}
+
+public class MainDriver {
+
+    public static void main(String[] agrs) throws IOException {
+        int[] denominations = {1, 2, 3};
+        int totalValue = 4;
+        Map<String,Integer> lookUpTable = new HashMap<>();
+        int maxCount= CoinChange.countMax(denominations, denominations.length, totalValue, lookUpTable);
+        System.out.println("Max Possible Count : " + maxCount);
+    }
+}
+:END
+
+Program 10.3  Coin change problem - Limited supply - dynamic program, top down
+package ds_algo_github;
+
+import java.io.*;
+import java.util.*;
+
+/**
+ * Limited supply of coins
+ * Dynamic program
+ * i. include coin 
+ * ii. exclude coin 
+ * iii. Add both
+ */
+class CoinChange {
+
+    public static int countMax(int[] denominations, int availableCoinsNumber, int availableValue, Map<String,Integer> lookUpTable) {
+        if (availableValue == 0) {
+            return 1;
+        }
+        if (availableCoinsNumber == 0 || availableValue < 0) {
+            return 0;
+        }
+        String key = availableCoinsNumber + "|" + availableValue;
+        if (!lookUpTable.containsKey(key)) {
+            int include = countMax(denominations, availableCoinsNumber - 1, availableValue - denominations[availableCoinsNumber - 1], lookUpTable);
+            int exclude = countMax(denominations, availableCoinsNumber - 1, availableValue, lookUpTable);
+            lookUpTable.put(key, (include + exclude));
+        }
+        return lookUpTable.get(key);
+    }
+}
+
+public class MainDriver {
+
+    public static void main(String[] agrs) throws IOException {
+        int[] denominations = {1, 2, 3};
+        int totalValue = 4;
+        Map<String,Integer> lookUpTable = new HashMap<>();
+        int maxCount= CoinChange.countMax(denominations, denominations.length, totalValue, lookUpTable);
+        System.out.println("Max Possible Count : " + maxCount);
+    }
+}
+:END
+
+Program 10.4  Minimum number of coin change to get desired value - recursion , top-down
+package ds_algo_github;
+
+import java.io.*;
+import java.util.*;
+
+/**
+ * Unlimited supply of coins - recursion program
+ */
+class CoinChange {
+
+    static int countMin(int[] denominations, int totalValue) {
+        if (totalValue == 0) {
+            return 0;
+        }
+        if (totalValue < 0) {
+            return Integer.MAX_VALUE;
+        }
+        int minCount = Integer.MAX_VALUE;
+        for (int i = 0; i < denominations.length; i++) {
+            int result = countMin(denominations, totalValue - denominations[i]);
+            if (result != Integer.MAX_VALUE) {
+                minCount = Integer.min(minCount, result + 1);
+            }
+        }
+        return minCount;
+    }
+}
+
+public class MainDriver {
+
+    public static void main(String[] agrs) throws IOException {
+        int[] denominations = {1, 2, 3, 4, 5};
+        int totalValue = 10;
+        Map<String, Integer> lookUpTable = new HashMap<>();
+        int minCount = CoinChange.countMin(denominations, totalValue);
+        System.out.println("Minimum Possible Count : " + minCount);//2
+    }
+}
+:END

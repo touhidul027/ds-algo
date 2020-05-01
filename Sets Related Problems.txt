@@ -1,0 +1,362 @@
+Program 1: Implemented DisjointSet using HashMap
+package main;
+
+import java.io.IOException;
+import java.util.Scanner;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+
+class DisjointSet {
+    private Map<Integer, Integer> disjointSets = new HashMap();
+
+    public DisjointSet(int[] items) {
+        // create n disjoint sets (one for each item)
+        for (int i : items) {
+            disjointSets.put(i, i);
+        }
+    }
+
+    // Find the root of the set in which element k belongs
+    public int Find(int k) {
+        // if k is root, its the representative
+        if (disjointSets.get(k) == k) {
+            System.out.println("Representative");
+            return k;
+        }
+
+        // recur for parent until we find root;for the representative
+        System.out.println("Not Representative.Going to search again");
+        return Find(disjointSets.get(k));
+    }
+
+    // Perform Union of two subsets
+    public void Union(int a, int b) {
+        // find root of the sets in which elements
+        // x and y belongs
+        int x = Find(a);
+        int y = Find(b);
+
+        disjointSets.put(x, y);
+    }
+
+    public void printSets(int[] items) {
+        for (int i : items) {
+            System.out.println("For :" + i + " -> Rerpesentative:" + this.Find(i) + " ");
+        }
+
+        System.out.println();
+    }
+}
+
+public class Main {
+    public static void main(String[] args) throws IOException {
+        int[] items = {1, 2, 3, 4, 5};
+        DisjointSet ds = new DisjointSet(items);
+        ds.printSets(items);
+
+        ds.Union(1, 2);
+        ds.printSets(items);
+
+        ds.Union(3, 4);
+        ds.printSets(items);
+        
+        ds.Union(2, 4);
+        ds.printSets(items);
+        
+        System.out.println(ds.Find(3));
+    }
+}
+:END
+
+Program 2: Implemented DisjointSet using Linked List
+package main;
+
+import java.io.IOException;
+import java.util.Scanner;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+
+// will build tree-like structure
+class Node {
+
+    public int number;
+    public int rank;
+    public Node parent;
+
+    public Node(int number) {
+        this.number = number;
+        this.rank = 0;
+        this.parent = this;
+    }
+
+    @Override
+    public String toString() {
+        return "Representative Set name is:" + this.number + " Rank:" + this.rank;
+    }
+}
+
+class DisjointSet {
+
+    private Map<Integer, Node> maps;
+    int[] items;
+    int size;
+
+    public DisjointSet(int[] items) {
+        maps = new HashMap();
+        this.size = items.length;
+        this.items = items;
+        for (int i = 0; i < this.size; i++) {
+            maps.put(this.items[i], new Node(this.items[i]));
+        }
+    }
+
+    public void Find(int item) {
+        Node specificNode = this.maps.get(item);
+        Node representativeNode = this.Find(specificNode);
+        System.out.println("Find For :" + item + " " + representativeNode);
+
+    }
+
+    private Node Find(Node node) {
+        if (node.parent == node) {
+            return node;
+        }
+        return this.Find(node.parent);
+    }
+
+    public void Union(int item1, int item2) {
+        System.out.println("Union of :[" + item1 + "," + item2 + "]");
+        Node a = this.maps.get(item1);
+        Node b = this.maps.get(item2);
+        this.Union(a, b);
+    }
+
+    private void Union(Node a, Node b) {
+        Node rootA = this.Find(a);
+        Node rootB = this.Find(b);
+
+        if (rootA == rootB) {
+            return;
+        }
+
+        if (rootA.rank >= rootB.rank) {
+            rootB.parent = rootA;
+            rootA.rank = rootA.rank + 1;
+        } else {
+            rootA.parent = rootB;
+            rootB.rank = rootB.rank + 1;
+        }
+    }
+
+    public void printSets() {
+
+        for (int i : this.items) {
+            Node temp = this.Find(this.maps.get(i)); // find representative
+            System.out.println("For :" + i + " " + temp);
+        }
+
+        System.out.println();
+    }
+}
+
+public class Main {
+
+    public static void main(String[] args) throws IOException {
+        int[] items = {1, 2, 3, 4, 5};
+        DisjointSet ds = new DisjointSet(items);
+        ds.printSets();
+
+        ds.Union(1, 2);
+        ds.Find(1);
+        ds.Find(2);
+
+        ds.Union(3, 4);
+        ds.Find(3);
+        ds.Find(4);
+
+        ds.Union(2, 4);
+        ds.Find(2);
+        ds.Find(4);
+
+        ds.Find(5);
+        ds.printSets();
+    }
+}
+/*
+Output:
+==========================================
+For :1 Representative Set name is:1 Rank:0
+For :2 Representative Set name is:2 Rank:0
+For :3 Representative Set name is:3 Rank:0
+For :4 Representative Set name is:4 Rank:0
+For :5 Representative Set name is:5 Rank:0
+
+Union of :[1,2]
+Find For :1 Representative Set name is:1 Rank:1
+Find For :2 Representative Set name is:1 Rank:1
+Union of :[3,4]
+Find For :3 Representative Set name is:3 Rank:1
+Find For :4 Representative Set name is:3 Rank:1
+Union of :[2,4]
+Find For :2 Representative Set name is:1 Rank:2
+Find For :4 Representative Set name is:1 Rank:2
+Find For :5 Representative Set name is:5 Rank:0
+For :1 Representative Set name is:1 Rank:2
+For :2 Representative Set name is:1 Rank:2
+For :3 Representative Set name is:1 Rank:2
+For :4 Representative Set name is:1 Rank:2
+For :5 Representative Set name is:5 Rank:0
+ */
+
+
+Program 3: Implemented DisjointSet using Linked List
+package main;
+
+import java.io.IOException;
+import java.util.Scanner;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+
+/*
+final sets structure
+      1         5
+   | | | |      |
+   1 2 3 4      5
+ */
+class Node {
+
+    public int number;
+    public int rank;
+    public Node parent;
+
+    public Node(int number) {
+        this.number = number;
+        this.rank = 0;
+        this.parent = this;
+    }
+
+    @Override
+    public String toString() {
+        return "Representative Set name is:" + this.number + " Rank:" + this.rank;
+    }
+}
+
+class DisjointSet {
+
+    private Map<Integer, Node> maps;
+    int[] items;
+    int size;
+
+    public DisjointSet(int[] items) {
+        maps = new HashMap();
+        this.size = items.length;
+        this.items = items;
+        for (int i = 0; i < this.size; i++) {
+            maps.put(this.items[i], new Node(this.items[i]));
+        }
+    }
+
+    public void Find(int item) {
+        Node specificNode = this.maps.get(item);
+        this.Find(specificNode);
+        Node updatedSpecificNode = this.maps.get(item);
+        System.out.println("Find For :" + item + " " + updatedSpecificNode.parent);
+
+    }
+
+    private Node Find(Node node) {
+        if (node.parent == node) {
+            return node;
+        }
+        Node temp = this.Find(node.parent);
+        node.parent = temp;
+        return temp;
+    }
+
+    public void Union(int item1, int item2) {
+        System.out.println("Union of :[" + item1 + "," + item2 + "]");
+        Node a = this.maps.get(item1);
+        Node b = this.maps.get(item2);
+        this.Union(a, b);
+    }
+
+    private void Union(Node a, Node b) {
+        Node rootA = this.Find(a);
+        Node rootB = this.Find(b);
+
+        if (rootA == rootB) {
+            return;
+        }
+
+        if (rootA.rank >= rootB.rank) {
+            rootB.parent = rootA;
+            rootA.rank = rootA.rank + 1;
+        } else {
+            rootA.parent = rootB;
+            rootB.rank = rootB.rank + 1;
+        }
+    }
+
+    public void printSets() {
+
+        for (int i : this.items) {
+            Node temp = this.maps.get(i);
+            System.out.println("For :" + i + " " + temp.parent);
+        }
+
+        System.out.println();
+    }
+}
+
+public class Main {
+
+    public static void main(String[] args) throws IOException {
+        int[] items = {1, 2, 3, 4, 5};
+        DisjointSet ds = new DisjointSet(items);
+        ds.printSets();
+
+        ds.Union(1, 2);
+        ds.Find(1);
+        ds.Find(2);
+
+        ds.Union(3, 4);
+        ds.Find(3);
+        ds.Find(4);
+
+        ds.Union(2, 4);
+        ds.Find(2);
+        ds.Find(4);
+
+        ds.Find(5);
+        ds.printSets();
+    }
+}
+/*
+Output:
+==========================================
+For :1 Representative Set name is:1 Rank:0
+For :2 Representative Set name is:2 Rank:0
+For :3 Representative Set name is:3 Rank:0
+For :4 Representative Set name is:4 Rank:0
+For :5 Representative Set name is:5 Rank:0
+
+Union of :[1,2]
+Find For :1 Representative Set name is:1 Rank:1
+Find For :2 Representative Set name is:1 Rank:1
+Union of :[3,4]
+Find For :3 Representative Set name is:3 Rank:1
+Find For :4 Representative Set name is:3 Rank:1
+Union of :[2,4]
+Find For :2 Representative Set name is:1 Rank:2
+Find For :4 Representative Set name is:1 Rank:2
+Find For :5 Representative Set name is:5 Rank:0
+For :1 Representative Set name is:1 Rank:2
+For :2 Representative Set name is:1 Rank:2
+For :3 Representative Set name is:1 Rank:2
+For :4 Representative Set name is:1 Rank:2
+For :5 Representative Set name is:5 Rank:0
+ */
+:END

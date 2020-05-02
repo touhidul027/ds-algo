@@ -1,0 +1,237 @@
+Program 1: GCD - two arguments: Greatest Common Divisor using EUCLID's Algorithm
+package main;
+
+//Implementations of GCD - two arguments: Greatest Common Divisor using EUCLID's Algorithm
+class GCD {
+
+    private int a;
+    private int b;
+    private int gcd;
+
+    public GCD(int a, int b) {
+        this.a = a;
+        this.b = b;
+        this.gcd = -1;
+    }
+
+    public void findGCD() {
+        int c = this.EUCLID(this.a, this.b);
+        this.gcd = c;
+    }
+
+    private int EUCLID(int a, int b) {
+        if (b == 0) {
+            return a;
+        } else {
+            return EUCLID(b, a % b);
+        }
+    }
+
+    public void displayGCD() {
+        System.out.println("a:" + this.a + " b:" + this.b + " gcd:" + this.gcd);
+    }
+}
+
+public class Main {
+
+    public static void main(String[] args) {
+        GCD gcd = new GCD(21, 9);
+        gcd.findGCD();
+        gcd.displayGCD();
+    }
+}
+:END
+
+Program 1.1: GCD - multiple arguments: Greatest Common Divisor using EUCLID's Algorithm
+package main;
+
+//Implementations of GCD - multiple arguments: Greatest Common Divisor using EUCLID's Algorithm
+
+import java.util.Arrays;
+
+class GCD {
+
+    private int a[];
+    private int gcd;
+
+    public GCD(int[] a) {
+        this.a = a;
+        this.gcd = -1;
+    }
+    // gcd(a,b,c,d) = gcd(a, gcd(b,c,d))
+    public void findGCD() {
+        int c = this.EUCLID(this.a);
+        this.gcd = c;
+    }
+
+    private int EUCLID(int[] a){
+        if(a.length == 2) {
+            return this.EUCLID(a[0], a[1]);
+        }
+        int m[] = Arrays.copyOfRange(a,1,a.length);//delete first element
+        return this.EUCLID(a[0],this.EUCLID(m));
+    }
+
+    private int EUCLID(int a, int b) {
+        if (b == 0) {
+            return a;
+        } else {
+            return EUCLID(b, a % b);
+        }
+    }
+
+    public void displayGCD() {
+        System.out.println("GCD: " + this.gcd);
+    }
+}
+
+public class Main {
+
+    public static void main(String[] args) {
+        int[] a = {27,21,24,9,6};
+        GCD gcd = new GCD(a);
+        gcd.findGCD();
+        gcd.displayGCD();
+    }
+}
+:END
+
+Program 2 : LCS-two arguments- : Least Common Multiple
+package main;
+
+//Implementations of LCS-two arguments- : Least Common Multiple
+import java.util.Arrays;
+
+/*
+   formula
+   a x b = LCM(a, b) * GCD (a, b)
+   LCM(a, b) = (a x b) / GCD(a, b) 
+ */
+class LCM {
+
+    private int a;
+    private int b;
+    private int lcm;
+
+    public LCM(int a, int b) {
+        this.a = a;
+        this.b = b;
+        this.lcm = -1;
+    }
+
+    public void findLCM() {
+        int gcd = this.EUCLID(this.a, this.b);
+        this.lcm = (this.a * this.b) / gcd;
+    }
+
+    private int EUCLID(int a, int b) {
+        if (b == 0) {
+            return a;
+        } else {
+            return EUCLID(b, a % b);
+        }
+    }
+
+    public void displayLCM() {
+        System.out.println("LCM: " + this.lcm);
+    }
+}
+
+public class Main {
+
+    public static void main(String[] args) {
+        LCM lcm = new LCM(25, 15);
+        lcm.findLCM();
+        lcm.displayLCM();//75
+    }
+}
+:END
+
+Program 2.1: LCS-multiple arguments- : Least Common Multiple
+package main;
+
+//Implementations of LCS-multiple arguments- : Least Common Multiple
+import java.util.Arrays;
+
+/*
+   formula
+   lcm(a1, a2, a3) = lcm(lcm(a1, a2), a3)
+ */
+class LCM {
+
+    private int[] a;
+    private int lcm;
+
+    public LCM(int[] a) {
+        this.a = a;
+        this.lcm = -1;
+    }
+
+    public void findLCM() {
+        int res = 1, i;
+        for (i = 0; i < this.a.length; i++) {
+            res = res * a[i] / this.EUCLID_GCD(res, a[i]);
+        }
+        this.lcm = res;
+    }
+
+    private int EUCLID_GCD(int a, int b) {
+        if (b == 0) {
+            return a;
+        } else {
+            return EUCLID_GCD(b, a % b);
+        }
+    }
+
+    public void displayLCM() {
+        System.out.println("LCM: " + this.lcm);
+    }
+}
+
+public class Main {
+
+    public static void main(String[] args) {
+        //int[] a = {2, 7, 3, 9, 4};//24
+        int[] a = {2, 7, 3, 9, 4};//252
+        LCM lcm = new LCM(a);
+        lcm.findLCM();
+        lcm.displayLCM();
+    }
+}
+:END
+
+
+Program 3: Integer Factorization: Finding All factors of a given number
+package main;
+
+public class Main {
+    public static void main(String[] args) {
+        int number = 60;
+        System.out.print("Factors of " + number + " are: ");
+        for(int i = 1; i <= number; ++i) {
+            if (number % i == 0) {
+                System.out.print(i + " ");
+            }
+        }
+    }
+}
+
+Program 3.1: Integer Prime Factorization: Finding All prime factors of a given number
+package main;
+
+public class Main {
+    public static void main(String[] args) {
+        int number = 30;
+        System.out.print("Prime Factors of " + number + " are: ");
+        for(int i = 2; i <= number; ++i) {
+            if (number % i == 0) {
+                System.out.print(i + " ");
+                number /= i;
+                i--;
+            }
+        }
+    }
+}
+
+
+

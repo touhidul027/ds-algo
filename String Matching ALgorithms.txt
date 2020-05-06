@@ -1,0 +1,159 @@
+Program 1: Naive String Matching Algorithms
+package main;
+
+class NaiveStringMatching {
+
+    public static void find(String text, String pattern) {
+        int patternLength = pattern.length();
+        int textLength = text.length();
+
+        for (int i = 0; i <= textLength - patternLength; i++) {
+            int j;
+            for (j = 0; j < patternLength; j++) {
+                if (text.charAt(i + j) != pattern.charAt(j)) {
+                    break;
+                }
+            }
+
+            if (j == patternLength) {
+                System.out.println("Pattern found at index " + i);
+            }
+        }
+    }
+}
+
+public class Main {
+
+    public static void main(String[] args) {
+        NaiveStringMatching.find("aabacabc", "abc");
+        NaiveStringMatching.find("AABAACAADAABAAABAA", "AABA");
+    }
+}
+/*
+run:
+Pattern found at index 5
+Pattern found at index 0
+Pattern found at index 9
+Pattern found at index 13
+*/
+
+Program 2: Rabin-karp algorithm implementadtion
+// usefull follow the link
+https://www.cs.princeton.edu/courses/archive/spring14/cos226/lectures/53SubstringSearch.pdf
+
+package main;
+
+import java.util.HashMap;
+import java.util.Map;
+
+class RabinKarp {
+
+    private String text;
+    private String pattern;
+    private int patternLength;
+    private int lastRollingPosition;
+    private int textLength;
+    private int hash;
+    private int unmatched;
+    Map<Character, Integer> mymap = new HashMap<Character, Integer>() {
+        {
+            put('a', 1);
+            put('b', 2);
+            put('c', 3);
+            put('d', 4);
+            put('e', 5);
+            put('f', 6);
+            put('g', 7);
+            put('h', 8);
+        }
+    };
+
+    public RabinKarp(String text, String pattern) {
+        this.unmatched = -1000;
+        this.lastRollingPosition = this.unmatched;
+        this.patternLength = pattern.length();
+        this.text = text;
+        this.textLength = text.length();
+        this.pattern = pattern;
+    }
+
+    public int patternHash() {
+        int ptHash = 0;
+        int j = this.patternLength;
+        for (int i = 0; i < this.patternLength; i++) {
+            ptHash += (int) Math.pow(10, --j) * this.mymap.get(this.pattern.charAt(i));
+        }
+        return ptHash;
+    }
+
+    private int getRollingHash(int position) {
+        int lim = (position + this.patternLength);
+        if (lim <= this.text.length()) {
+            int j = this.patternLength;
+            int a = (int) Math.pow(10, --j) * this.mymap.get(this.text.charAt(this.lastRollingPosition));
+            int b = this.mymap.get(this.text.charAt(lim - 1));
+            this.hash = (this.hash - a) * 10 + b;
+            this.lastRollingPosition++;
+            return this.hash;
+        }
+        return this.unmatched;
+    }
+
+    private int calculateHash(int position) {
+        int lim = (position + this.patternLength);
+        int h = 0;
+        if (lim <= this.text.length()) {
+            int j = this.patternLength;
+            for (int i = position; i < lim; i++) {
+                h += (int) Math.pow(10, --j) * this.mymap.get(this.text.charAt(i));
+            }
+            this.lastRollingPosition = position;
+            this.hash = h;
+            return this.hash;
+        }
+        return this.unmatched;
+    }
+
+    public int getHash(int position) {
+        int h;
+        if (position - 1 == this.lastRollingPosition) {
+            h = this.getRollingHash(position);
+        } else {
+            h = this.calculateHash(position);
+        }
+        return h;
+    }
+
+    void deepMatch(int i) {
+        String subString = this.text.substring(i, this.patternLength + i);
+        if (subString.equals(this.pattern)) {
+            System.out.println("Matched");
+        } else {
+            System.out.println("Not Matched");
+        }
+    }
+}
+
+public class Main {
+
+    public static void main(String[] args) {
+        String text = "abcdcabd";
+        String pattern = "abd";
+        RabinKarp rk = new RabinKarp(text, pattern);
+        int patternHashValue = rk.patternHash();
+        System.out.println(patternHashValue);
+        for (int i = 0; i <= text.length() - pattern.length(); i++) {
+            int hashValue = rk.getHash(i);
+            if (hashValue == patternHashValue) {
+                System.out.println("Initial Match found at " + i + "th position");
+                rk.deepMatch(i);
+            }
+        }
+    }
+}
+/*
+output:
+124
+Initial Match found at 5th position
+Matched
+*/

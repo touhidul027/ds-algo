@@ -157,3 +157,63 @@ output:
 Initial Match found at 5th position
 Matched
 */
+
+Program 3: Implementing Knuth Morris Pratt(KMP) Algorithm for string searching algorithm
+package main;
+
+import java.util.HashMap;
+import java.util.Map;
+
+public class Main {
+
+    public static int[] getPrefixTable(String pattern) {
+        int m = pattern.length();
+        int prefArray[] = new int[m];
+        int length = 0;
+        prefArray[0] = 0; //first place is always 0 as no prefix
+
+        for (int i = 1; i < m; i++) {
+            if (pattern.charAt(i) == pattern.charAt(length)) {
+                length++;
+                prefArray[i] = length;
+            } else if (length != 0) {
+                length = prefArray[length - 1];
+                i--;     //decrease i to avoid effect of increasing after iteration
+            } else {
+                prefArray[i] = 0;
+            }
+        }
+        return prefArray;
+    }
+
+    public static void KMPSearch(String text, String pat, int[] prefArray) {
+        int j = 0;
+        for (int i = 0; i < text.length(); i++) {
+            if (text.charAt(i) == pat.charAt(j)) {
+                j++;
+                if (j == pat.length()) {
+                    System.out.println("Patter found at " + (i - j + 1) + "'th position.");
+                    j = 0;
+                }
+            } else if (j > 0) {
+                j = prefArray[j - 1];
+                i--; // NB: not increasing i
+            }
+        }
+    }
+
+    public static void main(String[] args) {
+        String text = "aabaabbaadaab";
+        String pat = "aab";
+        int[] prefArray = getPrefixTable(pat);
+        KMPSearch(text, pat, prefArray);
+    }
+
+}
+/*
+OUTPUT:
+-----------------------------
+Patter found at 0'th position.
+Patter found at 3'th position.
+Patter found at 10'th position.
+*/

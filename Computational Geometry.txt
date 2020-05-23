@@ -1,0 +1,215 @@
+
+Program 1: Determining whether two line segments are intersected
+package main;
+
+import java.util.HashMap;
+import java.util.Map;
+
+class Point {
+
+    int x;
+    int y;
+
+    public Point(int x, int y) {
+        this.x = x;
+        this.y = y;
+    }
+};
+
+class LineIntersection {
+
+    public boolean segmentIntersects(Point p1, Point p2, Point p3, Point p4) {
+        int direction1 = this.direction(p3, p4, p1);
+        int direction2 = this.direction(p3, p4, p2);
+        int direction3 = this.direction(p1, p2, p3);
+        int direction4 = this.direction(p1, p2, p4);
+
+        if (((direction1 > 0 && direction2 < 0) || (direction1 < 0 && direction2 > 0)) && ((direction3 > 0 && direction4 < 0) || (direction3 < 0 && direction4 > 0))) {
+            return true;
+        } else if (direction1 == 0 && this.onSegments(p3, p4, p1)) {
+            return true;
+        } else if (direction2 == 0 && this.onSegments(p3, p4, p2)) {
+            return true;
+        } else if (direction3 == 0 && this.onSegments(p1, p2, p3)) {
+            return true;
+        } else if (direction4 == 0 && this.onSegments(p1, p2, p4)) {
+            return true;
+        }
+        return false;
+    }
+
+    // is C is clockwise or anti-clockwise from line ab
+    public static int direction(Point a, Point b, Point c) {
+        int val = (b.y - a.y) * (c.x - b.x) - (b.x - a.x) * (c.y - b.y);
+        return val;
+    }
+
+    public static boolean onSegments(Point a, Point b, Point c) {
+        // Line is ab, c is or not middle of them
+        if (c.x >= Math.min(a.x, b.x) && (c.x <= Math.max(a.y, b.y)) && (c.y >= Math.min(a.y, b.y)) && (c.y <= Math.max(a.y, b.y))) {
+            return true;
+        }
+        return false;
+    }
+}
+
+public class Main {
+
+    public static void main(String[] args) {
+        //  line 1 = {{0,0}, {5, 5}};
+        //  line 2 = {{2,-10}, {3, 10}};
+        LineIntersection lineIntersection = new LineIntersection();
+        boolean isLineIntersected = lineIntersection.segmentIntersects(new Point(0, 0), new Point(5, 5), new Point(2, -10), new Point(3, 10));
+        if (isLineIntersected) {
+            System.out.println("Line is intersected");
+        } else {
+            System.out.println("Line is not intersected");
+        }
+    }
+
+}
+Output:
+Line is intersected
+
+:END
+
+Program 2 - Ongoing: Determining whether any pair of Segments intersect: Sweep Line Algorithm
+package main;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+
+class LineIntersection {
+
+    public boolean segmentIntersects(Point p1, Point p2, Point p3, Point p4) {
+        int direction1 = this.direction(p3, p4, p1);
+        int direction2 = this.direction(p3, p4, p2);
+        int direction3 = this.direction(p1, p2, p3);
+        int direction4 = this.direction(p1, p2, p4);
+
+        if (((direction1 > 0 && direction2 < 0) || (direction1 < 0 && direction2 > 0)) && ((direction3 > 0 && direction4 < 0) || (direction3 < 0 && direction4 > 0))) {
+            return true;
+        } else if (direction1 == 0 && this.onSegments(p3, p4, p1)) {
+            return true;
+        } else if (direction2 == 0 && this.onSegments(p3, p4, p2)) {
+            return true;
+        } else if (direction3 == 0 && this.onSegments(p1, p2, p3)) {
+            return true;
+        } else if (direction4 == 0 && this.onSegments(p1, p2, p4)) {
+            return true;
+        }
+        return false;
+    }
+
+    // is C is clockwise or anti-clockwise from line ab
+    public static int direction(Point a, Point b, Point c) {
+        int val = (b.y - a.y) * (c.x - b.x) - (b.x - a.x) * (c.y - b.y);
+        return val;
+    }
+
+    public static boolean onSegments(Point a, Point b, Point c) {
+        // Line is ab, c is or not middle of them
+        if (c.x >= Math.min(a.x, b.x) && (c.x <= Math.max(a.y, b.y)) && (c.y >= Math.min(a.y, b.y)) && (c.y <= Math.max(a.y, b.y))) {
+            return true;
+        }
+        return false;
+    }
+}
+
+class Line {
+
+    public int startX;
+    public int startY;
+    public int endX;
+    public int endY;
+
+    public Line(int startX, int startY, int endX, int endY) {
+        this.startX = startX;
+        this.startY = startY;
+        this.endX = endX;
+        this.endY = endY;
+    }
+}
+
+class Point implements Comparable<Point> {
+
+    public int x;
+    public int y;
+    public boolean isStart;
+
+    public Point(int x, int y, boolean isStart) {
+        this.x = x;
+        this.y = y;
+        this.isStart = isStart;
+    }
+
+    //sort in ascending order by x first, then y
+    @Override
+    public int compareTo(Point o) {
+        if (this.x == o.x) {
+            return (this.x - o.x);
+        } else {
+            return (this.y - o.y);
+        }
+    }
+}
+
+class SweepLine {
+
+    private Line[] lines;
+    private LineIntersection lineIntersection;
+    private int currentLineNumbers;
+    private int maxLines;
+
+    public SweepLine(int maxLines) {
+        this.lines = new Line[maxLines];
+        this.maxLines = maxLines;
+        this.currentLineNumbers = 0;
+        this.lineIntersection = new LineIntersection();
+    }
+
+    public void insert(Line l) {
+        if (this.currentLineNumbers < this.maxLines) {
+            lines[this.currentLineNumbers++] = l;
+        }
+    }
+
+    public boolean anySegmentsIntersect() {
+        Point[] points = new Point[this.currentLineNumbers * 2];
+        Point px;
+        Line l;
+        int j = -1;
+
+        for (int i = 0; i < this.currentLineNumbers; i++) {
+            l = this.lines[i];
+            points[++j] = new Point(l.startX, l.startY, true);
+            points[++j] = new Point(l.endX, l.endY, false);
+        }
+        // now sort the points according to X coordinate,then y
+        Arrays.sort(points);
+
+        boolean isAnySegmentIntersected = this.anySegmentsIntersect(points);
+        if (isAnySegmentIntersected) {
+            System.out.println("Intersected");
+        } else {
+            System.out.println("Not Intersected");
+        }
+        return isAnySegmentIntersected;
+    }
+
+    private boolean anySegmentsIntersect(Point[] points) {
+
+        return true;
+    }
+
+}
+
+public class Main {
+
+    public static void main(String[] args) {
+    }
+
+}
+

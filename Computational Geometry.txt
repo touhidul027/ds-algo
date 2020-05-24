@@ -73,8 +73,8 @@ Line is intersected
 
 :END
 
-Program 2 - Ongoing: Determining whether any pair of Segments intersect: Sweep Line Algorithm
-package main;
+Program 2 : Determining whether any pair of Segments intersect: Sweep Line Algorithm
+package ds_algo_github;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -116,6 +116,17 @@ class LineIntersection {
         }
         return false;
     }
+
+    boolean segmentIntersects(Line lineA, Line lineB) {
+        System.out.println("[" + lineA + " , " + lineB + "]");
+
+        return this.segmentIntersects(
+                new Point(lineA.startX, lineA.startY),
+                new Point(lineA.endX, lineA.endY),
+                new Point(lineB.startX, lineB.startY),
+                new Point(lineB.endX, lineB.endY)
+        );
+    }
 }
 
 class Line {
@@ -131,6 +142,28 @@ class Line {
         this.endX = endX;
         this.endY = endY;
     }
+
+    @Override
+    public boolean equals(Object l) {
+        Line otherLine = (Line) l;
+        if (l == this) {
+            return true;
+        }
+        if (!(l instanceof Line)) {
+            return false;
+        }
+        if ((this.startX == otherLine.startX)
+                && (this.startY == otherLine.startY)
+                && (this.endX == otherLine.endX)
+                && (this.endY == otherLine.endY)) {
+            return true;
+        }
+        return false;
+    }
+
+    public String toString() {
+        return " {" + "(" + this.startX + "," + this.startY + ")," + "(" + this.endX + "," + this.endY + ")" + "} ";
+    }
 }
 
 class Point implements Comparable<Point> {
@@ -138,21 +171,98 @@ class Point implements Comparable<Point> {
     public int x;
     public int y;
     public boolean isStart;
+    public Line belongedLine;
 
-    public Point(int x, int y, boolean isStart) {
+    public Point(int x, int y) {
+        this.x = x;
+        this.y = y;
+    }
+
+    public Point(int x, int y, boolean isStart, Line belongedLine) {
         this.x = x;
         this.y = y;
         this.isStart = isStart;
+        this.belongedLine = belongedLine;
     }
 
     //sort in ascending order by x first, then y
     @Override
     public int compareTo(Point o) {
         if (this.x == o.x) {
-            return (this.x - o.x);
-        } else {
             return (this.y - o.y);
+        } else {
+            return (this.x - o.x);
         }
+    }
+
+    @Override
+    public boolean equals(Object p) {
+        Point castedPoint = (Point) p;
+        return this.belongedLine.equals(castedPoint.belongedLine);
+    }
+
+    @Override
+    public String toString() {
+        return "(" + this.x + "," + this.y + ")";
+    }
+}
+
+class ActivePointSegments {
+
+    public Point[] points;
+    public int currentPointsNumber;
+
+    public ActivePointSegments(int maxPoint) {
+        this.points = new Point[maxPoint];
+        this.currentPointsNumber = 0;
+    }
+
+    public void insert(Point p) {
+        this.points[this.currentPointsNumber++] = p;
+        Arrays.sort(this.points, 0, this.currentPointsNumber, (i, j) -> (i.y - j.y));
+    }
+
+    public void delete(Point p) {
+        boolean copyNextPointToCurrentPosition = false;
+        for (int i = 0; i < this.currentPointsNumber; i++) {
+            Point currentPoint = this.points[i];
+            if (copyNextPointToCurrentPosition || currentPoint.equals(p)) {
+                copyNextPointToCurrentPosition = true;
+                this.points[i] = this.points[i + 1];
+            }
+        }
+        if (copyNextPointToCurrentPosition) {
+            this.currentPointsNumber--;
+        }
+    }
+
+    public Point upperSegment(Point p) {
+        int currentSegmentPosition = this.currentSegmentPosition(p);
+        if (currentSegmentPosition < (this.currentPointsNumber - 1)) {
+            return this.points[currentSegmentPosition + 1];
+        }
+        return null;
+    }
+
+    public Point lowerSegment(Point p) {
+        int currentSegmentPosition = this.currentSegmentPosition(p);
+
+        if (currentSegmentPosition > 0) {
+            return this.points[currentSegmentPosition - 1];
+        }
+        return null;
+    }
+
+    private int currentSegmentPosition(Point p) {
+        int currentSegmentPosition = -1;
+        for (int i = 0; i < this.currentPointsNumber; i++) {
+            Point currentPoint = this.points[i];
+            if (currentPoint.equals(p)) {
+                currentSegmentPosition = i;
+                break;
+            }
+        }
+        return currentSegmentPosition;
     }
 }
 
@@ -184,11 +294,14 @@ class SweepLine {
 
         for (int i = 0; i < this.currentLineNumbers; i++) {
             l = this.lines[i];
-            points[++j] = new Point(l.startX, l.startY, true);
-            points[++j] = new Point(l.endX, l.endY, false);
+            points[++j] = new Point(l.startX, l.startY, true, l);
+            points[++j] = new Point(l.endX, l.endY, false, l);
         }
+        //System.out.println("UnSorted Points:" + Arrays.toString(points));
+
         // now sort the points according to X coordinate,then y
         Arrays.sort(points);
+        System.out.println("Sorted Points:" + Arrays.toString(points));
 
         boolean isAnySegmentIntersected = this.anySegmentsIntersect(points);
         if (isAnySegmentIntersected) {
@@ -200,16 +313,54 @@ class SweepLine {
     }
 
     private boolean anySegmentsIntersect(Point[] points) {
-
-        return true;
+        ActivePointSegments activePointSegments = new ActivePointSegments(this.maxLines * 2);
+        for (int i = 0; i < points.length; i++) {
+            Point p = points[i];
+            Line currentLine = p.belongedLine;
+            if (p.isStart) {
+                activePointSegments.insert(p);
+                Point upperPoint = activePointSegments.lowerSegment(p);
+                Point belowPoint = activePointSegments.upperSegment(p);
+                if ((upperPoint != null && lineIntersection.segmentIntersects(currentLine, upperPoint.belongedLine))
+                        || (belowPoint != null && lineIntersection.segmentIntersects(currentLine, belowPoint.belongedLine))) {
+                    return true;
+                }
+            } else {
+                Point upperPoint = activePointSegments.lowerSegment(p);
+                Point belowPoint = activePointSegments.upperSegment(p);
+                activePointSegments.delete(p);
+                if (upperPoint != null && belowPoint != null && lineIntersection.segmentIntersects(upperPoint.belongedLine, belowPoint.belongedLine)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
 }
 
-public class Main {
+public class MainDriver {
 
     public static void main(String[] args) {
+        SweepLine swl = new SweepLine(15);
+        swl.insert(new Line(1, 6, 4, 5));
+        swl.insert(new Line(1, 4, 3, 5));
+        swl.insert(new Line(2, 3, 5, 2));
+        swl.insert(new Line(4, 3, 8, 5));
+        swl.insert(new Line(5, 5, 6, 4)); //till now not intersected
+        //swl.anySegmentsIntersect();
+        swl.insert(new Line(6, 5, 8, 3)); //now intersected
+        swl.anySegmentsIntersect();
+
     }
 
 }
-
+Output:
+[ {(1,6),(4,5)}  ,  {(1,4),(3,5)} ]
+[ {(2,3),(5,2)}  ,  {(1,4),(3,5)} ]
+[ {(2,3),(5,2)}  ,  {(1,6),(4,5)} ]
+[ {(4,3),(8,5)}  ,  {(2,3),(5,2)} ]
+[ {(4,3),(8,5)}  ,  {(1,6),(4,5)} ]
+[ {(5,5),(6,4)}  ,  {(4,3),(8,5)} ]
+[ {(6,5),(8,3)}  ,  {(4,3),(8,5)} ]
+Intersected

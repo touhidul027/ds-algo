@@ -437,7 +437,7 @@ class ConvexHull {
     }
 
     public void grahamScan() {
-        // sort points firslt according to y and then x
+        // sort points first according to y and then x
         Arrays.sort(this.points, 0, this.currentPointsNumber, (i, j) -> {
             if (i.y == j.y) {
                 return (i.x - j.x);
@@ -452,11 +452,28 @@ class ConvexHull {
 
         Stack<Point> s = new Stack<>();
         s.push(this.points[0]);
+        s.push(ps[0]);
+        s.push(ps[1]);
+        // applying left right rule
+        for (int i = 2; i < ps.length; i++) {
+            while (rightTurn(s.get(s.size() - 1), s.get(s.size() - 2), ps[i])) {
+                s.pop();
+            }
+            s.push(ps[i]);
+        }
 
+        // s is now containing points that made up convex hull
+        System.out.println(s.toString());
+    }
+
+    // test for clockwise and anti-clockwise, then return result
+    private boolean rightTurn(Point a, Point b, Point c) {
+        int val = (b.y - a.y) * (c.x - b.x) - (b.x - a.x) * (c.y - b.y);
+        return val > 0;
     }
 
     private Point[] sortedArrayByPolarAngle(Point[] ps) {
-        System.out.println(Arrays.toString(ps));
+        //System.out.println(Arrays.toString(ps));
         int j = 0;//for next element  
         for (int i = 0; i < ps.length - 1; i++) {
             if (Math.atan2(ps[i].x, ps[i].y) != Math.atan2(ps[i + 1].x, ps[i + 1].y)) {
@@ -495,11 +512,13 @@ public class Main {
         cvh.insert(new Point(2, 0));
         cvh.insert(new Point(4, 4));
         cvh.insert(new Point(5, 0));
+        cvh.insert(new Point(0, 0));
         cvh.insert(new Point(1, 2));
         cvh.insert(new Point(3, 1));
         cvh.insert(new Point(3, 3));
         cvh.grahamScan();
     }
 }
-
+output:
+[(0,0), (0,3), (4,4), (5,0)]
  

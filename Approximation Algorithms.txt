@@ -1,0 +1,189 @@
+program 1: The vertex cover problem
+START:
+package main;
+
+import java.util.ArrayList;
+import java.util.Random;
+
+class Vertex {
+
+    private int vertex;
+
+    public Vertex(int vertex) {
+        this.vertex = vertex;
+    }
+
+    protected int getValue() {
+        return vertex;
+    }
+
+    public String toString() {
+        return Integer.toString(vertex);
+    }
+}
+
+class Edge {
+
+    private Vertex vertex1;
+    private Vertex vertex2;
+
+    public Edge(Vertex vertex1, Vertex vertex2) {
+        this.vertex1 = vertex1;
+        this.vertex2 = vertex2;
+    }
+
+    public Vertex getVertex1() {
+        return this.vertex1;
+    }
+
+    public Vertex getVertex2() {
+        return this.vertex2;
+    }
+
+    public boolean hasVertex(Vertex vertex) {
+        if (this.vertex1.getValue() == vertex.getValue() || this.vertex2.getValue() == vertex.getValue()) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    public String toString() {
+        return "(" + vertex1 + ", " + vertex2 + ")";
+    }
+
+}
+
+class Graph {
+
+    private ArrayList<Vertex> vertices;
+    private ArrayList<Edge> edges;
+
+    public Graph(Vertex[] newVertices, Edge[] newEdges) {
+        edges = new ArrayList<Edge>();
+        for (Edge edgeList : newEdges) {
+            this.edges.add(edgeList);
+        }
+        vertices = new ArrayList<Vertex>();
+        for (Vertex vertexList : newVertices) {
+            this.vertices.add(vertexList);
+        }
+    }
+
+    public Graph() {
+        this.vertices = new ArrayList<>();
+        this.edges = new ArrayList<>();
+    }
+
+    public void addVertex(int i) {
+        Vertex v = new Vertex(i);
+        this.vertices.add(v);
+    }
+
+    protected Vertex getVertex(int i) {
+        return this.vertices.get(i);
+    }
+
+    protected ArrayList<Edge> getEdges() {
+        ArrayList<Edge> edges = new ArrayList<Edge>();
+        for (Edge edge : this.edges) {
+            edges.add(edge);
+        }
+        return edges;
+    }
+
+    protected ArrayList<Vertex> getVertices() {
+        ArrayList<Vertex> vertices = new ArrayList<Vertex>();
+        for (Vertex vertex : this.vertices) {
+            vertices.add(vertex);
+        }
+        return vertices;
+    }
+
+    protected int numVertices() {
+        return vertices.size();
+    }
+
+    public String toString() {
+        return "Vertices: " + vertices.toString() + "\nEdges: " + edges.toString();
+    }
+}
+
+class VertexCover {
+
+    private Graph graph;
+    private ArrayList<Vertex> cover;
+
+    public VertexCover(Graph graph) {
+        this.graph = graph;
+    }
+
+    protected void removeEdges(Vertex vertex, ArrayList<Edge> edgeList) {
+        ArrayList<Edge> removeEdge = new ArrayList<Edge>();
+        for (int i = 0; i < edgeList.size(); i++) {
+            if ((edgeList.get(i)).hasVertex(vertex)) {
+                removeEdge.add(edgeList.get(i));
+            }
+        }
+        for (int i = 0; i < removeEdge.size(); i++) {
+            edgeList.remove(removeEdge.get(i));
+        }
+    }
+
+    protected void approxCover() {
+
+        ArrayList<Edge> edges = graph.getEdges();
+        System.out.println("All presented edges : " + edges);
+        cover = new ArrayList<Vertex>();
+        while (!edges.isEmpty()) {
+            Random random = new Random();
+            int edge = random.nextInt(edges.size());
+            Edge e = edges.get(edge);
+            System.out.println("Current Edges: " + e);
+            cover.add(e.getVertex1());
+            cover.add(e.getVertex2());
+            this.removeEdges(e.getVertex1(), edges);
+            this.removeEdges(e.getVertex2(), edges);
+            System.out.println(edges);
+
+        }
+        System.out.println("The vertices of the approximation cover are: " + cover.toString());
+    }
+
+}
+
+public class Main {
+
+    public static void main(String[] args) {
+        Vertex[] vertices = {
+            new Vertex(1),
+            new Vertex(2),
+            new Vertex(3),
+            new Vertex(5),
+            new Vertex(4)
+        };
+
+        Edge[] graphEdges = {
+            new Edge(new Vertex(1), new Vertex(2)),
+            new Edge(new Vertex(1), new Vertex(3)),
+            new Edge(new Vertex(1), new Vertex(4)),
+            new Edge(new Vertex(1), new Vertex(5)),
+            new Edge(new Vertex(2), new Vertex(3)),
+            new Edge(new Vertex(2), new Vertex(4)),
+            new Edge(new Vertex(4), new Vertex(5))
+        };
+        Graph testGraph = new Graph(vertices, graphEdges);
+        VertexCover vertexCover = new VertexCover(testGraph);
+        vertexCover.approxCover();
+    }
+}
+/* output:
+All presented edges : [(1, 2), (1, 3), (1, 4), (1, 5), (2, 3), (2, 4), (4, 5)]
+Current Edges: (2, 3)
+[(1, 4), (1, 5), (4, 5)]
+Current Edges: (1, 4)
+[]
+The vertices of the approximation cover are: [2, 3, 1, 4]
+*/
+:END

@@ -187,3 +187,91 @@ Current Edges: (1, 4)
 The vertices of the approximation cover are: [2, 3, 1, 4]
 */
 :END
+
+
+Program 2: Traveling salesman problem : brute force method
+START:
+package main;
+
+import java.util.Arrays;
+import static java.util.Arrays.copyOfRange;
+import java.util.HashSet;
+import java.util.Set;
+
+class TravelingSalesMan {
+
+    private int[][] cities;
+    private int nCities;
+
+    public void addCities(int[][] cities) {
+        this.cities = cities;
+        this.nCities = cities[0].length;
+    }
+
+    public int minimumTravellingCost() {
+        if (this.nCities == 0) {
+            System.out.println("Please add cities first");
+            return Integer.MAX_VALUE;
+        }
+        Set<Integer> remainingCities = new HashSet<>();
+        //copying remaining index
+        for (int i = 1; i < this.nCities; i++) {
+            remainingCities.add(i);
+        }
+        int minCost = this.tspMinimumCost(0, remainingCities);
+        System.out.println("So, MINIMUM COST IS: " + minCost);
+        return minCost;
+    }
+
+    private int tspMinimumCost(int srcCityIndex, Set<Integer> remainingCities) {
+        if (remainingCities.size() == 0) {
+            return this.cities[srcCityIndex][0];
+        }
+        int totalRoundTripCost = 1000;
+        for (int cityIndex : remainingCities) {
+            int nextCityWeight = this.cities[srcCityIndex][cityIndex];
+            Set<Integer> remainingCities2 = this.getRemainingCitiesIndexExcept(remainingCities, cityIndex);
+            int minimumCost = this.tspMinimumCost(cityIndex, remainingCities2);
+            if (nextCityWeight + minimumCost < totalRoundTripCost) {
+                totalRoundTripCost = nextCityWeight + minimumCost;
+            }
+        }
+        return totalRoundTripCost;
+    }
+
+    private Set<Integer> getRemainingCitiesIndexExcept(Set<Integer> s, int cityIndex) {
+        Set<Integer> temp = new HashSet<>();
+        for (int t : s) {
+            if (t != cityIndex) {
+                temp.add(t);
+            }
+        }
+        return temp;
+    }
+}
+
+public class Main {
+
+    public static void main(String[] args) {
+        TravelingSalesMan travelingSalesMan = new TravelingSalesMan();
+        int[][] cityMap = {
+            {0, 10, 15, 20},
+            {10, 0, 35, 25},
+            {15, 35, 0, 30},
+            {20, 25, 30, 0}
+        };
+        int[][] cityMap2 = {
+            {0, 16, 11, 6},
+            {8, 0, 13, 16},
+            {4, 7, 0, 9},
+            {5, 12, 2, 0}
+        };
+        //travelingSalesMan.addCities(cityMap); //80
+        travelingSalesMan.addCities(cityMap2); //23
+        travelingSalesMan.minimumTravellingCost();
+    }
+}
+out put:
+run:
+So, MINIMUM COST IS: 23
+:END

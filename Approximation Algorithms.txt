@@ -275,3 +275,83 @@ out put:
 run:
 So, MINIMUM COST IS: 23
 :END
+
+Program 3: The set cover problem : greedy method
+START:
+package main;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+
+class SetCover {
+
+    public static ArrayList<Set<Integer>> greedySetCover(Set<Integer> elements, ArrayList<Set<Integer>> sets) {
+        Set<Integer> remainingElements = elements;
+        ArrayList<Set<Integer>> coveredSets = new ArrayList<Set<Integer>>();
+        while (remainingElements.size() > 0) {
+            Set<Integer> tempSet = SetCover.getMaxCommonSet(remainingElements, sets);
+            coveredSets.add(tempSet);
+            remainingElements.removeAll(tempSet);
+        }
+        SetCover.display(coveredSets);
+        return coveredSets;
+    }
+
+    private static Set<Integer> getMaxCommonSet(Set<Integer> remainingElements, ArrayList<Set<Integer>> sets) {
+        int commonElements = 0;
+        int setElementNumber = 2000;
+        Set<Integer> rightSet = new HashSet<>();
+
+        for (Set<Integer> temp : sets) {
+            //as java works by reference
+            Set<Integer> s = new HashSet<>(temp);
+            Set<Integer> saved = new HashSet<>(temp);
+            int originalSize = s.size();
+            s.retainAll(remainingElements);
+            if (!s.isEmpty() && s.size() >= commonElements) {
+                if (s.size() > commonElements) {
+                    commonElements = s.size();
+                    setElementNumber = originalSize;
+                    rightSet = saved;
+                } else if (originalSize < setElementNumber) {
+                    commonElements = s.size();
+                    setElementNumber = originalSize;
+                    rightSet = saved;
+                }
+            }
+        }
+        return rightSet;
+    }
+
+    public static void display(ArrayList<Set<Integer>> sets) {
+        for (Set<Integer> s : sets) {
+            System.out.println(s);
+        }
+    }
+}
+
+public class Main {
+
+    public static void main(String[] args) {
+        Set<Integer> U = new HashSet<Integer>(Arrays.asList(new Integer[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12}));
+
+        ArrayList<Set<Integer>> sets = new ArrayList<Set<Integer>>();
+        sets.add(new HashSet<Integer>(Arrays.asList(new Integer[]{1, 2, 5, 6, 9, 10})));
+        sets.add(new HashSet<Integer>(Arrays.asList(new Integer[]{6, 7, 11, 10})));
+        sets.add(new HashSet<Integer>(Arrays.asList(new Integer[]{1, 2, 3, 4})));
+        sets.add(new HashSet<Integer>(Arrays.asList(new Integer[]{3, 5, 6, 7, 8})));
+        sets.add(new HashSet<Integer>(Arrays.asList(new Integer[]{9, 10, 11, 12})));
+        sets.add(new HashSet<Integer>(Arrays.asList(new Integer[]{4, 8})));
+
+        SetCover.greedySetCover(U, sets);
+    }
+}
+output:
+run:
+[1, 2, 5, 6, 9, 10]
+[3, 5, 6, 7, 8]
+[9, 10, 11, 12]
+[4, 8]
+:END

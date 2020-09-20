@@ -355,3 +355,55 @@ run:
 [9, 10, 11, 12]
 [4, 8]
 :END
+
+
+Program 4: ExactSubsetSum(In progress)
+package main;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
+
+class ExactSubsetSum {
+
+    public static boolean exactSubSetSum(int[] arr, int t) {
+        int n = arr.length;
+        ArrayList<ArrayList<Integer>> l = new ArrayList<ArrayList<Integer>>();
+        l.add(new ArrayList<Integer>(Arrays.asList(new Integer[]{0})));
+        l.get(0);
+        System.out.println(l.get(0));
+        for (int i = 0; i < n; i++) {
+            System.out.println("arr_i " + arr[i]);
+            ArrayList<Integer> newList = buildNextList(l.get(i), arr[i]);
+            ArrayList<Integer> mergedList = mergeList(l.get(i), newList);
+            mergedList = removeHigherNumber(mergedList, t);
+            l.add(mergedList);
+        }
+        // check last list last number
+        return l.get(l.size() - 1).get(n - 1) == t;
+    }
+
+    private static ArrayList<Integer> buildNextList(ArrayList<Integer> get, int i) {
+        return null;
+    }
+
+    private static ArrayList<Integer> mergeList(ArrayList<Integer> get, ArrayList<Integer> newList) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    private static ArrayList<Integer> removeHigherNumber(ArrayList<Integer> mergedList, int t) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+}
+
+public class Main {
+
+    public static void main(String[] args) {
+        int[] arr = {1, 2, 5, 9, 4};
+        ExactSubsetSum.exactSubSetSum(arr, 18);
+    }
+}
+
+:END

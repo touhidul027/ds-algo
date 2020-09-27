@@ -384,16 +384,52 @@ class ExactSubsetSum {
         return l.get(l.size() - 1).get(n - 1) == t;
     }
 
-    private static ArrayList<Integer> buildNextList(ArrayList<Integer> get, int i) {
-        return null;
+    private static ArrayList<Integer> buildNextList(ArrayList<Integer> list, int i) {
+        ArrayList<Integer> newList = new ArrayList<>();
+        for (Integer ele : list) {
+            newList.add(ele + i);
+        }
+        return newList;
     }
 
-    private static ArrayList<Integer> mergeList(ArrayList<Integer> get, ArrayList<Integer> newList) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    private static ArrayList<Integer> mergeList(ArrayList<Integer> listA, ArrayList<Integer> listB) {
+        int i = 0, j = 0;
+        ArrayList<Integer> newList = new ArrayList<>();
+        while (i < listA.length() && j < listB.length()) {
+            int a = listA.get(i);
+            int b = listB.get(j);
+            if (a == b) {
+                newList.add(a);
+                i++;
+                j++;
+            } else if (a < b) {
+                newList.add(a);
+                i++;
+            } else {
+                newList.add(b);
+                j++;
+            }
+        }
+
+        while (a < listA.length()) {
+            newList.add(listA.get(i++));
+        }
+
+        while (b < listB.length()) {
+            newList.add(listB.get(j++));
+        }
+
+        return newList;
     }
 
     private static ArrayList<Integer> removeHigherNumber(ArrayList<Integer> mergedList, int t) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        ArrayList<Integer> newList = new ArrayList<>();
+        for (Int i : mergedList) {
+            if (i <= t) {
+               newList.add(i);
+            }
+        }
+        return newList;
     }
 
 }

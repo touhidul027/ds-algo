@@ -357,7 +357,7 @@ run:
 :END
 
 
-Program 4: ExactSubsetSum(In progress)
+Program 4: ExactSubsetSum
 package main;
 
 import java.util.ArrayList;
@@ -374,14 +374,23 @@ class ExactSubsetSum {
         l.get(0);
         System.out.println(l.get(0));
         for (int i = 0; i < n; i++) {
-            System.out.println("arr_i " + arr[i]);
+            System.out.println("i_" + i + " : " + arr[i]);
             ArrayList<Integer> newList = buildNextList(l.get(i), arr[i]);
             ArrayList<Integer> mergedList = mergeList(l.get(i), newList);
             mergedList = removeHigherNumber(mergedList, t);
+            System.out.println(mergedList);
             l.add(mergedList);
         }
         // check last list last number
-        return l.get(l.size() - 1).get(n - 1) == t;
+        return checking(l, t);
+    }
+
+    private static boolean checking(ArrayList<ArrayList<Integer>> l, int t) {
+        ArrayList<Integer> lastList = l.get(l.size() - 1);// [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18]
+        int nSize = lastList.size();
+        int lastNummber = lastList.get(nSize - 1);
+        System.out.println("Last Number Is: " + lastNummber);
+        return lastNummber == t;
     }
 
     private static ArrayList<Integer> buildNextList(ArrayList<Integer> list, int i) {
@@ -395,7 +404,7 @@ class ExactSubsetSum {
     private static ArrayList<Integer> mergeList(ArrayList<Integer> listA, ArrayList<Integer> listB) {
         int i = 0, j = 0;
         ArrayList<Integer> newList = new ArrayList<>();
-        while (i < listA.length() && j < listB.length()) {
+        while (i < listA.size() && j < listB.size()) {
             int a = listA.get(i);
             int b = listB.get(j);
             if (a == b) {
@@ -411,11 +420,11 @@ class ExactSubsetSum {
             }
         }
 
-        while (a < listA.length()) {
+        while (i < listA.size()) {
             newList.add(listA.get(i++));
         }
 
-        while (b < listB.length()) {
+        while (j < listB.size()) {
             newList.add(listB.get(j++));
         }
 
@@ -424,9 +433,9 @@ class ExactSubsetSum {
 
     private static ArrayList<Integer> removeHigherNumber(ArrayList<Integer> mergedList, int t) {
         ArrayList<Integer> newList = new ArrayList<>();
-        for (Int i : mergedList) {
+        for (int i : mergedList) {
             if (i <= t) {
-               newList.add(i);
+                newList.add(i);
             }
         }
         return newList;
@@ -438,8 +447,14 @@ public class Main {
 
     public static void main(String[] args) {
         int[] arr = {1, 2, 5, 9, 4};
-        ExactSubsetSum.exactSubSetSum(arr, 18);
+        boolean flag = ExactSubsetSum.exactSubSetSum(arr, 18); // for 18, true
+        if (flag) {
+            System.out.println("Yes Subset present.");
+        } else {
+            System.out.println("No, Subset not present.");
+        }
     }
 }
+
 
 :END

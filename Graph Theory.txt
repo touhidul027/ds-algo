@@ -402,7 +402,442 @@ BUILD SUCCESSFUL (total time: 1 second
 
 Program 3.1 Minimum Spanning Tree - Kruskals Algorithm for Minimum Spanning Tree-Greedy method
 START:
+package main;
 
+import java.util.HashMap;
+import java.util.Map;
+
+class Vertex {
+
+    public char label;// label (e.g. ‘A’)
+    public boolean wasVisited;
+    public boolean isInTree;
+
+    public Vertex(char lab) {
+        label = lab;
+        wasVisited = false;
+        isInTree = false;
+    }
+}
+
+class Edge {
+
+    public int srcVert;
+    public int destVert;
+    public int distance;
+
+    public Edge(int sv, int dv, int d) {
+        srcVert = sv;
+        destVert = dv;
+        distance = d;
+    }
+
+    public String toString() {
+        return "srcVert " + srcVert + ", destVert:" + destVert + ", distance:" + distance;
+    }
+}
+
+class PriorityQ {
+
+    private final int SIZE = 20;
+    private Edge[] queArray;
+    private int size;
+
+    public PriorityQ() {
+        queArray = new Edge[SIZE];
+        size = 0;
+    }
+
+    public void insert(Edge item) {
+        int j;
+        for (j = 0; j < size; j++) {
+            if (item.distance >= queArray[j].distance) {
+                break;
+            }
+        }
+        for (int k = size - 1; k >= j; k--) { //move items up
+            queArray[k + 1] = queArray[k];
+        }
+        queArray[j] = item;
+        size++;
+    }
+
+    public void prepareQueue(int adjMat[][], int nVerts) {
+        //System.out.println(nVerts);
+        for (int i = 0; i < nVerts; i++) {
+            for (int j = i + 1; j < nVerts; j++) {
+                if (adjMat[i][j] != -1 && adjMat[i][j] != 0) {
+                    Edge item = new Edge(i, j, adjMat[i][j]);
+                    //System.out.println(item);
+                    this.insert(item);
+                }
+            }
+        }
+    }
+
+    public void printQArray() {
+        System.out.println("++++++ printQArray");
+        for (int j = size - 1; j >= 0; j--) {
+            System.out.println(queArray[j]);
+        }
+        System.out.println("----- printQArray");
+    }
+
+    public Edge removeMin() {
+        return queArray[--size];
+    }
+
+    public void removeN(int n) {
+        for (int j = n; j < size - 1; j++) { // move items down
+            queArray[j] = queArray[j + 1];
+        }
+        size--;
+    }
+
+    public Edge peekMin() {
+        return queArray[size - 1];
+    }
+
+    public int size() {
+        return size;
+    }
+
+    public boolean isEmpty() // true if queue is empty
+    {
+        return (size == 0);
+    }
+
+    public Edge peekN(int n) {
+        return queArray[n];
+    }
+
+    public int find(int findDex) {
+        for (int j = 0; j < size; j++) {
+            if (queArray[j].destVert == findDex) {
+                return j;
+            }
+        }
+        return -1;
+    }
+}
+
+// details at specified file category
+class DisjointSet {
+
+    private Map<Character, Character> disjointSets = new HashMap();
+
+    public DisjointSet(Character[] items) {
+        // create n disjoint sets (one for each item)
+        for (Character i : items) {
+            disjointSets.put(i, i);
+        }
+    }
+
+    // Find the root of the set in which element k belongs
+    public Character Find(Character k) {
+        // if k is root, its the representative
+        if (disjointSets.get(k) == k) {
+            // System.out.println("Representative");
+            return k;
+        }
+
+        // recur for parent until we find root;for the representative
+        //System.out.println("Not Representative.Going to search again");
+        return Find(disjointSets.get(k));
+    }
+
+    // Perform Union of two subsets
+    public void Union(Character a, Character b) {
+        System.out.println("+++++ Union +++++++");
+        System.out.println(a + " : " + b);
+        // find root of the sets in which elements
+        // x and y belongs
+        Character x = Find(a);
+        Character y = Find(b);
+
+        disjointSets.put(x, y);
+        System.out.println("------ Union -------");
+    }
+
+    public void printRelation() {
+        System.out.println("++++++++++++++");
+        System.out.println(this.disjointSets);
+        System.out.println("--------------");
+    }
+}
+
+class Graph {
+
+    private final int MAX_VERTS = 20;
+    private Vertex vertexList[];
+    private int adjMat[][];
+    int nVerts;
+    int notConnectedFlagNumber = -1;
+    PriorityQ priorityQ;
+    DisjointSet ds;
+
+    public Graph() {
+        vertexList = new Vertex[MAX_VERTS];
+        adjMat = new int[MAX_VERTS][MAX_VERTS];
+        nVerts = 0;
+        priorityQ = new PriorityQ();
+        ds = null;
+        for (int j = 0; j < MAX_VERTS; j++) {
+            for (int k = 0; k < MAX_VERTS; k++) {
+                adjMat[j][k] = this.notConnectedFlagNumber;
+            }
+        }
+    }
+
+    public void addVertex(char lab) {
+        vertexList[nVerts++] = new Vertex(lab);
+    }
+
+    public void addEdge(int start, int end, int distance) {
+        adjMat[start][end] = distance;
+    }
+
+    public void displayVertex(int v) {
+        System.out.print(vertexList[v].label);
+    }
+
+    public void mst() {
+        System.out.println("++++ mst ++++");
+        //this.printMatrix(adjMat);
+        int adjMat1[][] = this.removeLoop(adjMat);
+        //this.printMatrix(adjMat1);
+        int adjMatFinal[][] = this.removeParallelEdges(adjMat1);
+        //this.printMatrix(adjMatFinal);
+        priorityQ.prepareQueue(adjMatFinal, nVerts);
+
+        // now building mst
+        int[][] mst = new int[MAX_VERTS][MAX_VERTS];
+        for (int j = 0; j < MAX_VERTS; j++) {
+            for (int k = 0; k < MAX_VERTS; k++) {
+                if (j == k) {
+                    mst[j][k] = 0;
+                    continue;
+                }
+                mst[j][k] = this.notConnectedFlagNumber;
+            }
+        }
+
+        //this.printMatrix(mst);
+        //System.out.println(this.priorityQ.size());
+        this.priorityQ.printQArray();
+
+        // need disjoint set approach for detectig cycle
+        Character[] items = new Character[this.nVerts];
+        for (int i = 0; i < this.nVerts; i++) {
+            //System.out.println(this.vertexList[i].label);
+            items[i] = this.vertexList[i].label;
+        }
+        this.ds = new DisjointSet(items);
+        this.ds.printRelation();
+
+        while (!this.priorityQ.isEmpty()) {
+            Edge e = this.priorityQ.removeMin();
+            //System.out.println(e);
+            //this.priorityQ.printQArray();
+            int srcVertexIndex = e.srcVert;
+            int destVertexINdex = e.destVert;
+            int distance = e.distance;
+
+            if (this.isCycleFormForConnectedTwoVertices(srcVertexIndex, destVertexINdex)) {
+                //System.out.println("Already in tree");
+                continue;
+            }
+
+            //System.out.println(e);
+            this.vertexList[srcVertexIndex].isInTree = true;
+            this.vertexList[destVertexINdex].isInTree = true;
+
+            mst[srcVertexIndex][destVertexINdex] = distance;
+            mst[destVertexINdex][srcVertexIndex] = distance;
+            //this.printMatrix(mst);
+        }
+        this.ds.printRelation();
+        this.printMatrix(mst);
+        System.out.println("---- mst ----");
+    }
+
+    public int getAdjUnvisitedVertex(int v) {
+        for (int j = 0; j < nVerts; j++) {
+            if (adjMat[v][j] == 1 && vertexList[j].wasVisited == false) {
+                return j;
+            }
+        }
+        return -1;
+    }
+
+    private int[][] removeLoop(int[][] adjMat) {
+        for (int i = 0; i < this.nVerts; i++) {
+            adjMat[i][i] = 0;
+        }
+        return adjMat;
+    }
+
+    private int[][] removeParallelEdges(int[][] adjMat1) {
+        for (int i = 0; i < nVerts; i++) {
+            for (int j = i + 1; j < nVerts; j++) {
+                // for any two vertex at most two parallel edeges could be found
+                int oneEdge = adjMat1[i][j];
+                int anotherEdge = adjMat1[j][i];
+                if (oneEdge <= anotherEdge) {
+                    adjMat1[i][j] = oneEdge;
+                    adjMat1[j][i] = oneEdge;
+                } else {
+                    adjMat1[i][j] = anotherEdge;
+                    adjMat1[j][i] = anotherEdge;
+                }
+            }
+        }
+        return adjMat1;
+    }
+
+    private void printMatrix(int[][] matrix) {
+        System.out.println("+++++ printMatrix +++++++");
+        for (int j = 0; j < nVerts; j++) {
+            for (int k = 0; k < nVerts; k++) {
+                System.out.print(matrix[j][k] + "  ");
+            }
+            System.out.println("");
+        }
+        System.out.println("----- printMatrix --------");
+    }
+
+    private boolean isCycleFormForConnectedTwoVertices(int srcVertexIndex, int destVertexINdex) {
+        System.out.println("++++++++ isCycleFormForConnectedTwoVertices ++++++++");
+        // two vertex has the same representative then it will make cycle
+        Character srcVertexLabel = this.vertexList[srcVertexIndex].label;
+        Character desVertexLabel = this.vertexList[destVertexINdex].label;
+
+        Character srcVertexRepresentative = this.ds.Find(srcVertexLabel);
+        Character desVertexRepresentative = this.ds.Find(desVertexLabel);
+
+        if (srcVertexRepresentative == desVertexRepresentative) {
+            // will be created a loop
+            return true;
+        }
+        //this.ds.Union(srcVertexRepresentative, desVertexRepresentative);
+        this.ds.Union(srcVertexLabel, desVertexLabel);
+        System.out.println("-------- isCycleFormForConnectedTwoVertices --------");
+        return false;
+    }
+
+    private boolean isCycleFormForConnectedTwoVerticesBackUP(int[][] mst, int srcVertexIndex, int destVertexINdex, int distance) {
+        System.out.println("++++++++ isCycleFormForConnectedTwoVertices ++++++++");
+        // add two vertices
+        mst[srcVertexIndex][destVertexINdex] = distance;
+        mst[destVertexINdex][srcVertexIndex] = distance;
+        // check cycle
+        // if cycle exist, backtrack two vertices information
+        System.out.println("-------- isCycleFormForConnectedTwoVertices --------");
+        return false;
+    }
+
+}
+
+public class Main {
+
+    public static void main(String[] args) {
+        Graph theGraph = new Graph();
+        // example taken from , https://www.tutorialspoint.com/data_structures_algorithms/kruskals_spanning_tree_algorithm.htm
+        theGraph.addVertex('A');    // 0
+        theGraph.addVertex('B');    // 1
+        theGraph.addVertex('C');    // 2
+        theGraph.addVertex('D');    // 3
+        theGraph.addVertex('S');    // 4
+        theGraph.addVertex('T');    // 5
+
+        theGraph.addEdge(0, 1, 6); // AB 6
+        theGraph.addEdge(0, 2, 3); // AC 3
+        theGraph.addEdge(0, 4, 7); // AS 7
+
+        theGraph.addEdge(1, 0, 9); // BA 9
+        theGraph.addEdge(1, 2, 4); // BC 4
+        theGraph.addEdge(1, 3, 2); // BD 2
+        theGraph.addEdge(1, 5, 5); // BT 5
+
+        theGraph.addEdge(2, 0, 3); // CA 3
+        theGraph.addEdge(2, 1, 4); // CB 4
+        theGraph.addEdge(2, 2, 1); // CC 1
+        theGraph.addEdge(2, 3, 3); // CD 3
+        theGraph.addEdge(2, 4, 8); // CS 8
+
+        theGraph.addEdge(3, 1, 2); // DB 2
+        theGraph.addEdge(3, 2, 3); // DC 3
+        theGraph.addEdge(3, 5, 2); // DT 2
+
+        theGraph.addEdge(4, 0, 7); // SA 7
+        theGraph.addEdge(4, 2, 8); // SC 8
+
+        theGraph.addEdge(5, 1, 5); // TB 5
+        theGraph.addEdge(5, 3, 2); // TD 2
+
+        //System.out.print("Spanning Tree Visits : ");
+        theGraph.mst();
+        System.out.println();
+    }
+}
+
+Output:
+++++ mst ++++
+++++++ printQArray
+srcVert 1, destVert:3, distance:2
+srcVert 3, destVert:5, distance:2
+srcVert 0, destVert:2, distance:3
+srcVert 2, destVert:3, distance:3
+srcVert 1, destVert:2, distance:4
+srcVert 1, destVert:5, distance:5
+srcVert 0, destVert:1, distance:6
+srcVert 0, destVert:4, distance:7
+srcVert 2, destVert:4, distance:8
+----- printQArray
+++++++++++++++
+{A=A, B=B, C=C, S=S, D=D, T=T}
+--------------
+++++++++ isCycleFormForConnectedTwoVertices ++++++++
++++++ Union +++++++
+B : D
+------ Union -------
+-------- isCycleFormForConnectedTwoVertices --------
+++++++++ isCycleFormForConnectedTwoVertices ++++++++
++++++ Union +++++++
+D : T
+------ Union -------
+-------- isCycleFormForConnectedTwoVertices --------
+++++++++ isCycleFormForConnectedTwoVertices ++++++++
++++++ Union +++++++
+A : C
+------ Union -------
+-------- isCycleFormForConnectedTwoVertices --------
+++++++++ isCycleFormForConnectedTwoVertices ++++++++
++++++ Union +++++++
+C : D
+------ Union -------
+-------- isCycleFormForConnectedTwoVertices --------
+++++++++ isCycleFormForConnectedTwoVertices ++++++++
+++++++++ isCycleFormForConnectedTwoVertices ++++++++
+++++++++ isCycleFormForConnectedTwoVertices ++++++++
+++++++++ isCycleFormForConnectedTwoVertices ++++++++
++++++ Union +++++++
+A : S
+------ Union -------
+-------- isCycleFormForConnectedTwoVertices --------
+++++++++ isCycleFormForConnectedTwoVertices ++++++++
+++++++++++++++
+{A=C, B=D, C=T, S=S, D=T, T=S}
+--------------
++++++ printMatrix +++++++
+0  -1  3  -1  7  -1  
+-1  0  -1  2  -1  -1  
+3  -1  0  3  -1  -1  
+-1  2  3  0  -1  2  
+7  -1  -1  -1  0  -1  
+-1  -1  -1  2  -1  0  
+----- printMatrix --------
+---- mst ----
 :END
 
 

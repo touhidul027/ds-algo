@@ -840,15 +840,137 @@ A : S
 ---- mst ----
 :END
 
+Program 3.2 MST-prims algorithm
+:START
+package main;
 
+import java.util.HashMap;
+import java.util.Map;
 
+class Graph {
 
+    int nVerts;
+    int notConnectedFlagNumber = -1;
 
+    public Graph() {
+        nVerts = 6;
+    }
 
+    public void mst(int adjMat[][], int startingVertexIndex) {
+        System.out.println("++++ mst ++++");
+        int adjMat1[][] = this.removeLoop(adjMat);
+        int adjMatFinal[][] = this.removeParallelEdges(adjMat1);
 
+        boolean[] verticesInMST = new boolean[this.nVerts];
+        int[] minQ = new int[this.nVerts];
+        int[] MSTParentRelation = new int[this.nVerts];
+        int[] mstPath = new int[this.nVerts];
 
+        for (int i = 0; i < this.nVerts; i++) {
+            verticesInMST[i] = false;
+            minQ[i] = Integer.MAX_VALUE;
+            mstPath[i] = -1;
+        }
 
+        // setting the starting point in Q
+        minQ[startingVertexIndex] = 0;
+        MSTParentRelation[startingVertexIndex] = -1;
 
+        for (int i = 0; i < this.nVerts; i++) {
+            int u = nextVertex(minQ, verticesInMST);
+            verticesInMST[u] = true;
+            mstPath[i] = u;
 
+            for (int v = 0; v < this.nVerts; v++) {
+                if (adjMatFinal[u][v] != 0 && adjMatFinal[u][v] != this.notConnectedFlagNumber && verticesInMST[v] == false && adjMatFinal[u][v] < minQ[v]) {
+                    minQ[v] = adjMatFinal[u][v];
+                    MSTParentRelation[v] = u;
+                }
+            }
+        }
+        this.printMSTPath(mstPath, adjMatFinal, startingVertexIndex, MSTParentRelation);
+        System.out.println("---- mst ----");
+    }
 
+    private int[][] removeLoop(int[][] adjMat) {
+        for (int i = 0; i < this.nVerts; i++) {
+            adjMat[i][i] = 0;
+        }
+        return adjMat;
+    }
 
+    private int[][] removeParallelEdges(int[][] adjMat1) {
+        for (int i = 0; i < nVerts; i++) {
+            for (int j = i + 1; j < nVerts; j++) {
+                // for any two vertex at most two parallel edeges could be found
+                int oneEdge = adjMat1[i][j];
+                int anotherEdge = adjMat1[j][i];
+                if (oneEdge <= anotherEdge) {
+                    adjMat1[i][j] = oneEdge;
+                    adjMat1[j][i] = oneEdge;
+                } else {
+                    adjMat1[i][j] = anotherEdge;
+                    adjMat1[j][i] = anotherEdge;
+                }
+            }
+        }
+        return adjMat1;
+    }
+
+    int nextVertex(int[] minQ, boolean verticesInMST[]) {
+        int min = Integer.MAX_VALUE, vertexIndex = -1;
+
+        for (int v = 0; v < this.nVerts; v++) {
+            if (verticesInMST[v] == false && minQ[v] < min) {
+                min = minQ[v];
+                vertexIndex = v;
+            }
+        }
+        return vertexIndex;
+    }
+
+    private void printMatrix(int[][] matrix) {
+        System.out.println("+++++ printMatrix +++++++");
+        for (int j = 0; j < nVerts; j++) {
+            for (int k = 0; k < nVerts; k++) {
+                System.out.print(matrix[j][k] + "  ");
+            }
+            System.out.println("");
+        }
+        System.out.println("----- printMatrix --------");
+    }
+
+    private void printMSTPath(int[] mstPath, int graph[][], int startingIndex, int[] MSTRelation) {
+        System.out.println("Starting vertex:" + startingIndex);
+        for (int i = 1; i < mstPath.length; i++) {
+            System.out.println(MSTRelation[mstPath[i]] + " -> " + mstPath[i]);
+        }
+    }
+}
+
+public class Main {
+
+    public static void main(String[] args) {
+        Graph theGraph = new Graph();
+        // example build from , https://www.tutorialspoint.com/data_structures_algorithms/prims_spanning_tree_algorithm.htm
+        int graph[][] = new int[][]{
+            {0, 6, 3, -1, 7, -1},
+            {9, 0, 4, 2, -1, 5},
+            {3, 4, 1, 3, 8, -1},
+            {-1, 2, 3, 0, -1, 2},
+            {7, -1, 8, -1, 0, -1},
+            {-1, 5, -1, 2, -1, 0}
+        };
+        theGraph.mst(graph, 4);
+    }
+}
+Output:
+++++ mst ++++
+Starting vertex:4
+4 -> 0
+0 -> 2
+2 -> 3
+3 -> 1
+3 -> 5
+---- mst ----
+:END

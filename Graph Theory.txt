@@ -974,3 +974,168 @@ Starting vertex:4
 3 -> 5
 ---- mst ----
 :END
+
+Program 4: Single source shortestPath: Bellman-ford Algorithm
+:START
+package main;
+
+import java.util.ArrayList;
+
+class Vertex {
+
+    public char label;// label (e.g. ‘A’)
+    public boolean wasVisited;
+    public boolean isInTree;
+    public Vertex predecessor;
+    public int currentshortestDistance;
+
+    public Vertex(char lab) {
+        label = lab;
+        wasVisited = false;
+        isInTree = false;
+        predecessor = null;
+    }
+}
+
+class Edge {
+
+    public int srcVert;
+    public int destVert;
+    public int distance;
+
+    public Edge(int sv, int dv, int d) {
+        srcVert = sv;
+        destVert = dv;
+        distance = d;
+    }
+
+    public String toString() {
+        return "srcVert " + srcVert + ", destVert:" + destVert + ", distance:" + distance;
+    }
+}
+
+class Graph {
+
+    private final int MAX_VERTS = 20;
+    private Vertex vertexList[];
+    private int adjMat[][];
+    int nVerts;
+    int notConnectedFlagNumber = Integer.MAX_VALUE;
+    ArrayList<Edge> edgeList = new ArrayList<>();
+
+    public Graph() {
+        vertexList = new Vertex[MAX_VERTS];
+        adjMat = new int[MAX_VERTS][MAX_VERTS];
+        nVerts = 0;
+        for (int j = 0; j < MAX_VERTS; j++) {
+            for (int k = 0; k < MAX_VERTS; k++) {
+                adjMat[j][k] = this.notConnectedFlagNumber;
+            }
+        }
+    }
+
+    public void addVertex(char lab) {
+        vertexList[nVerts++] = new Vertex(lab);
+    }
+
+    public void addEdge(int start, int end, int distance) {
+        adjMat[start][end] = distance;
+        this.edgeList.add(new Edge(start, end, distance));
+    }
+
+    public boolean shortestPath(int sourceVertex) {
+        // initialize single source
+        for (int i = 0; i < nVerts; i++) {
+            Vertex v = vertexList[i];
+            v.currentshortestDistance = Integer.MAX_VALUE;
+            v.predecessor = null;
+        }
+        this.vertexList[sourceVertex].currentshortestDistance = 0;
+
+        System.out.println("Edge Number:" + edgeList.size());
+        System.out.println("Before Relaxing:");
+        for (int i = 0; i < nVerts; i++) {
+            System.out.println(this.vertexList[i].label + " " + this.vertexList[i].currentshortestDistance);
+        }
+
+        for (int i = 0; i < nVerts - 1; i++) {
+            for (Edge e : edgeList) {
+                // relaxing
+                int d = e.distance;
+                Vertex u = this.vertexList[e.srcVert];
+                Vertex v = this.vertexList[e.destVert];
+
+                if (v.currentshortestDistance > u.currentshortestDistance + d) {
+                    v.currentshortestDistance = u.currentshortestDistance + d;
+                    v.predecessor = u;
+                }
+            }
+        }
+        System.out.println("After relaxing:");
+        for (int i = 1; i < nVerts; i++) {
+            System.out.println(this.vertexList[i].predecessor.label + " -> " + this.vertexList[i].label + " " + this.vertexList[i].currentshortestDistance);
+        }
+
+        for (Edge e : edgeList) {
+            int d = e.distance;
+            Vertex u = this.vertexList[e.srcVert];
+            Vertex v = this.vertexList[e.destVert];
+            if (v.currentshortestDistance > u.currentshortestDistance + d) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    public void displayVertex(int v) {
+        System.out.print(vertexList[v].label);
+    }
+}
+
+public class Main {
+
+    public static void main(String[] args) {
+        Graph theGraph = new Graph();
+        // graph has been taken from jenny's lecture
+        theGraph.addVertex('A');    // 0
+        theGraph.addVertex('B');    // 1
+        theGraph.addVertex('C');    // 2
+        theGraph.addVertex('D');    // 3
+        theGraph.addVertex('E');    // 4
+        theGraph.addVertex('F');    // 5
+
+        theGraph.addEdge(0, 1, 6); // AB 6
+        theGraph.addEdge(0, 2, 4); // AC 4
+        theGraph.addEdge(0, 3, 5); // AD 5
+
+        theGraph.addEdge(1, 4, -1); // BE -1
+
+        theGraph.addEdge(2, 1, -2); // CB -2
+        theGraph.addEdge(2, 4, 3); // CE 3
+
+        theGraph.addEdge(3, 2, -2); // DC -2
+        theGraph.addEdge(3, 5, -1); // DF -1
+
+        theGraph.addEdge(4, 5, 3); // EF 3
+        theGraph.shortestPath(0);
+    }
+}
+Output:
+
+Edge Number:9
+Before Relaxing:
+A 0
+B 2147483647
+C 2147483647
+D 2147483647
+E 2147483647
+F 2147483647
+After relaxing:
+C -> B 1
+D -> C 3
+A -> D 5
+B -> E 0
+E -> F 3
+BUILD SUCCESSFUL (total time: 0 seconds)
+:END

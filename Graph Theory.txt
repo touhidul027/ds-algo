@@ -1,0 +1,1396 @@
+Program 1: The Depth First Search (Undirected)
+START:
+package main;
+
+class StackX {
+
+    private final int SIZE = 20;
+    private int[] st;
+    private int top;
+
+    public StackX() {
+        st = new int[SIZE];
+        top = -1;
+    }
+
+    public void push(int j) {
+        st[++top] = j;
+    }
+
+    public int pop() {
+        return st[top--];
+    }
+
+    public int peek() {
+        return st[top];
+    }
+
+    public boolean isEmpty() {
+        return (top == -1);
+    }
+}
+
+class Vertex {
+
+    public char label;// label (e.g. ‘A’)
+    public boolean wasVisited;
+
+    public Vertex(char lab) {
+        label = lab;
+        wasVisited = false;
+    }
+}
+
+class Graph {
+
+    private final int MAX_VERTS = 20;
+    private Vertex vertexList[];
+    private int adjMat[][];
+    int nVerts;
+    private StackX theStack;
+
+    public Graph() {
+        vertexList = new Vertex[MAX_VERTS];
+        adjMat = new int[MAX_VERTS][MAX_VERTS];
+        nVerts = 0;
+        for (int j = 0; j < MAX_VERTS; j++) {
+            for (int k = 0; k < MAX_VERTS; k++) {
+                adjMat[j][k] = 0;
+            }
+        }
+        theStack = new StackX();
+    }
+
+    public void addVertex(char lab) {
+        vertexList[nVerts++] = new Vertex(lab);
+    }
+
+    public void addEdge(int start, int end) {
+        adjMat[start][end] = 1;
+        adjMat[end][start] = 1;
+    }
+
+    public void displayVertex(int v) {
+        System.out.print(vertexList[v].label);
+    }
+
+    public void dfs() {
+        vertexList[0].wasVisited = true;
+        displayVertex(0);
+        theStack.push(0);
+        while (!theStack.isEmpty()) {
+            int v = getAdjUnvisitedVertex(theStack.peek());
+            if (v == -1) {
+                theStack.pop();
+            } else {
+                vertexList[v].wasVisited = true;
+                displayVertex(v);
+                theStack.push(v);
+            }
+        }
+
+        for (int j = 0; j < nVerts; j++) // reset flag
+        {
+            vertexList[j].wasVisited = false;
+        }
+    }
+
+    public int getAdjUnvisitedVertex(int v) {
+        for (int j = 0; j < nVerts; j++) {
+            if (adjMat[v][j] == 1 && vertexList[j].wasVisited == false) {
+                return j;
+            }
+        }
+        return -1;
+    }
+}
+
+public class Main {
+
+    public static void main(String[] args) {
+        Graph theGraph = new Graph();
+        theGraph.addVertex('A');
+        theGraph.addVertex('B');    // 1
+        theGraph.addVertex('C');    // 2
+        theGraph.addVertex('D');    // 3
+        theGraph.addVertex('E');    // 4
+        theGraph.addEdge(0, 1);     // AB
+        theGraph.addEdge(1, 2);     // BC
+        theGraph.addEdge(0, 3);     // AD
+        theGraph.addEdge(3, 4);     // DE
+        System.out.print("Visits : ");
+        theGraph.dfs();             // depth-first search
+        System.out.println();
+    }
+}
+
+Output: 
+Visits : ABCDE
+
+:END
+
+Program 2: Breath First Search (Undirected)
+START:
+package main;
+
+class Queue {
+
+    private final int SIZE = 20;
+    private int[] queArray;
+    private int front;
+    private int rear;
+
+    public Queue() {
+        queArray = new int[SIZE];
+        front = 0;
+        rear = -1;
+    }
+
+    public void insert(int j) {
+        if (rear == SIZE - 1) {
+            rear = -1;
+        }
+        queArray[++rear] = j;
+    }
+
+    public int remove() {
+        int temp = queArray[front++];
+        if (front == SIZE) {
+            front = 0;
+        }
+        return temp;
+    }
+
+    public boolean isEmpty() {
+        return (rear + 1 == front || (front + SIZE - 1 == rear));
+    }
+}
+
+class Vertex {
+
+    public char label;// label (e.g. ‘A’)
+    public boolean wasVisited;
+
+    public Vertex(char lab) {
+        label = lab;
+        wasVisited = false;
+    }
+}
+
+class Graph {
+
+    private final int MAX_VERTS = 20;
+    private Vertex vertexList[];
+    private int adjMat[][];
+    int nVerts;
+    private Queue theQueue;
+
+    public Graph() {
+        vertexList = new Vertex[MAX_VERTS];
+        adjMat = new int[MAX_VERTS][MAX_VERTS];
+        nVerts = 0;
+        for (int j = 0; j < MAX_VERTS; j++) {
+            for (int k = 0; k < MAX_VERTS; k++) {
+                adjMat[j][k] = 0;
+            }
+        }
+        theQueue = new Queue();
+    }
+
+    public void addVertex(char lab) {
+        vertexList[nVerts++] = new Vertex(lab);
+    }
+
+    public void addEdge(int start, int end) {
+        adjMat[start][end] = 1;
+        adjMat[end][start] = 1;
+    }
+
+    public void displayVertex(int v) {
+        System.out.print(vertexList[v].label);
+    }
+
+    public void bfs() {
+        vertexList[0].wasVisited = true;
+        displayVertex(0);
+        theQueue.insert(0);
+        int v2;
+        while (!theQueue.isEmpty()) {
+            int v1 = theQueue.remove();
+            while ((v2 = getAdjUnvisitedVertex(v1)) != -1) {
+                vertexList[v2].wasVisited = true;
+                displayVertex(v2);
+                theQueue.insert(v2);
+            }
+        }
+        for (int j = 0; j < nVerts; j++) {
+            vertexList[j].wasVisited = false;
+        }
+    }
+
+    public int getAdjUnvisitedVertex(int v) {
+        for (int j = 0; j < nVerts; j++) {
+            if (adjMat[v][j] == 1 && vertexList[j].wasVisited == false) {
+                return j;
+            }
+        }
+        return -1;
+    }
+}
+
+public class Main {
+
+    public static void main(String[] args) {
+        Graph theGraph = new Graph();
+        theGraph.addVertex('A');
+        theGraph.addVertex('B');    // 1
+        theGraph.addVertex('C');    // 2
+        theGraph.addVertex('D');    // 3
+        theGraph.addVertex('E');    // 4
+        theGraph.addEdge(0, 1);     // AB
+        theGraph.addEdge(1, 2);     // BC
+        theGraph.addEdge(0, 3);     // AD
+        theGraph.addEdge(3, 4);     // DE
+        System.out.print("Visits : ");
+        theGraph.bfs();             // depth-first search
+        System.out.println();
+    }
+}
+
+Output:
+Visits : ABDCE
+
+:END
+
+Program 3: Minimum Spanning Tree (Unweigted, used dfs search)
+START:
+package main;
+
+class StackX {
+
+    private final int SIZE = 20;
+    private int[] st;
+    private int top;
+
+    public StackX() {
+        st = new int[SIZE];
+        top = -1;
+    }
+
+    public void push(int j) {
+        st[++top] = j;
+    }
+
+    public int pop() {
+        return st[top--];
+    }
+
+    public int peek() {
+        return st[top];
+    }
+
+    public boolean isEmpty() {
+        return (top == -1);
+    }
+}
+
+class Vertex {
+
+    public char label;// label (e.g. ‘A’)
+    public boolean wasVisited;
+
+    public Vertex(char lab) {
+        label = lab;
+        wasVisited = false;
+    }
+}
+
+class Graph {
+
+    private final int MAX_VERTS = 20;
+    private Vertex vertexList[];
+    private int adjMat[][];
+    int nVerts;
+    private StackX theStack;
+
+    public Graph() {
+        vertexList = new Vertex[MAX_VERTS];
+        adjMat = new int[MAX_VERTS][MAX_VERTS];
+        nVerts = 0;
+        for (int j = 0; j < MAX_VERTS; j++) {
+            for (int k = 0; k < MAX_VERTS; k++) {
+                adjMat[j][k] = 0;
+            }
+        }
+        theStack = new StackX();
+    }
+
+    public void addVertex(char lab) {
+        vertexList[nVerts++] = new Vertex(lab);
+    }
+
+    public void addEdge(int start, int end) {
+        adjMat[start][end] = 1;
+        adjMat[end][start] = 1;
+    }
+
+    public void displayVertex(int v) {
+        System.out.print(vertexList[v].label);
+    }
+
+    public void mst() {
+        // start at 0
+        vertexList[0].wasVisited = true;
+        theStack.push(0);
+        while (!theStack.isEmpty()) {
+            int currentVertex = theStack.peek();// get next unvisited neighbor
+            int v = getAdjUnvisitedVertex(currentVertex);
+            if (v == -1) {
+                theStack.pop();
+            } else {
+                vertexList[v].wasVisited = true;
+                theStack.push(v);
+                displayVertex(currentVertex);
+                displayVertex(v);
+                System.out.print(" ");
+            }
+        }
+        for (int j = 0; j < nVerts; j++) {
+            vertexList[j].wasVisited = false;
+        }
+    }
+
+    public int getAdjUnvisitedVertex(int v) {
+        for (int j = 0; j < nVerts; j++) {
+            if (adjMat[v][j] == 1 && vertexList[j].wasVisited == false) {
+                return j;
+            }
+        }
+        return -1;
+    }
+}
+
+public class Main {
+
+    public static void main(String[] args) {
+        Graph theGraph = new Graph();
+        theGraph.addVertex('A');
+        theGraph.addVertex('B');    // 1
+        theGraph.addVertex('C');    // 2
+        theGraph.addVertex('D');    // 3
+        theGraph.addVertex('E');    // 4
+		
+        theGraph.addEdge(0, 1);     // AB
+        theGraph.addEdge(0, 2);     // AC
+        theGraph.addEdge(0, 3);     // AD
+        theGraph.addEdge(0, 4);     // AE
+        theGraph.addEdge(1, 2);     // BC
+        theGraph.addEdge(1, 3);     // BD
+        theGraph.addEdge(1, 4);     // BE
+        theGraph.addEdge(2, 3);     // CD
+        theGraph.addEdge(2, 4);     // CE
+        theGraph.addEdge(3, 4);     // DE
+        System.out.print("Spanning Tree Visits : ");
+        theGraph.mst();             // depth-first search
+        System.out.println();
+    }
+}
+run:
+Spanning Tree Visits : AB BC CD DE 
+BUILD SUCCESSFUL (total time: 1 second
+:END
+
+Program 3.1 Minimum Spanning Tree - Kruskals Algorithm for Minimum Spanning Tree-Greedy method
+START:
+package main;
+
+import java.util.HashMap;
+import java.util.Map;
+
+class Vertex {
+
+    public char label;// label (e.g. ‘A’)
+    public boolean wasVisited;
+    public boolean isInTree;
+
+    public Vertex(char lab) {
+        label = lab;
+        wasVisited = false;
+        isInTree = false;
+    }
+}
+
+class Edge {
+
+    public int srcVert;
+    public int destVert;
+    public int distance;
+
+    public Edge(int sv, int dv, int d) {
+        srcVert = sv;
+        destVert = dv;
+        distance = d;
+    }
+
+    public String toString() {
+        return "srcVert " + srcVert + ", destVert:" + destVert + ", distance:" + distance;
+    }
+}
+
+class PriorityQ {
+
+    private final int SIZE = 20;
+    private Edge[] queArray;
+    private int size;
+
+    public PriorityQ() {
+        queArray = new Edge[SIZE];
+        size = 0;
+    }
+
+    public void insert(Edge item) {
+        int j;
+        for (j = 0; j < size; j++) {
+            if (item.distance >= queArray[j].distance) {
+                break;
+            }
+        }
+        for (int k = size - 1; k >= j; k--) { //move items up
+            queArray[k + 1] = queArray[k];
+        }
+        queArray[j] = item;
+        size++;
+    }
+
+    public void prepareQueue(int adjMat[][], int nVerts) {
+        //System.out.println(nVerts);
+        for (int i = 0; i < nVerts; i++) {
+            for (int j = i + 1; j < nVerts; j++) {
+                if (adjMat[i][j] != -1 && adjMat[i][j] != 0) {
+                    Edge item = new Edge(i, j, adjMat[i][j]);
+                    //System.out.println(item);
+                    this.insert(item);
+                }
+            }
+        }
+    }
+
+    public void printQArray() {
+        System.out.println("++++++ printQArray");
+        for (int j = size - 1; j >= 0; j--) {
+            System.out.println(queArray[j]);
+        }
+        System.out.println("----- printQArray");
+    }
+
+    public Edge removeMin() {
+        return queArray[--size];
+    }
+
+    public void removeN(int n) {
+        for (int j = n; j < size - 1; j++) { // move items down
+            queArray[j] = queArray[j + 1];
+        }
+        size--;
+    }
+
+    public Edge peekMin() {
+        return queArray[size - 1];
+    }
+
+    public int size() {
+        return size;
+    }
+
+    public boolean isEmpty() // true if queue is empty
+    {
+        return (size == 0);
+    }
+
+    public Edge peekN(int n) {
+        return queArray[n];
+    }
+
+    public int find(int findDex) {
+        for (int j = 0; j < size; j++) {
+            if (queArray[j].destVert == findDex) {
+                return j;
+            }
+        }
+        return -1;
+    }
+}
+
+// details at specified file category
+class DisjointSet {
+
+    private Map<Character, Character> disjointSets = new HashMap();
+
+    public DisjointSet(Character[] items) {
+        // create n disjoint sets (one for each item)
+        for (Character i : items) {
+            disjointSets.put(i, i);
+        }
+    }
+
+    // Find the root of the set in which element k belongs
+    public Character Find(Character k) {
+        // if k is root, its the representative
+        if (disjointSets.get(k) == k) {
+            // System.out.println("Representative");
+            return k;
+        }
+
+        // recur for parent until we find root;for the representative
+        //System.out.println("Not Representative.Going to search again");
+        return Find(disjointSets.get(k));
+    }
+
+    // Perform Union of two subsets
+    public void Union(Character a, Character b) {
+        System.out.println("+++++ Union +++++++");
+        System.out.println(a + " : " + b);
+        // find root of the sets in which elements
+        // x and y belongs
+        Character x = Find(a);
+        Character y = Find(b);
+
+        disjointSets.put(x, y);
+        System.out.println("------ Union -------");
+    }
+
+    public void printRelation() {
+        System.out.println("++++++++++++++");
+        System.out.println(this.disjointSets);
+        System.out.println("--------------");
+    }
+}
+
+class Graph {
+
+    private final int MAX_VERTS = 20;
+    private Vertex vertexList[];
+    private int adjMat[][];
+    int nVerts;
+    int notConnectedFlagNumber = -1;
+    PriorityQ priorityQ;
+    DisjointSet ds;
+
+    public Graph() {
+        vertexList = new Vertex[MAX_VERTS];
+        adjMat = new int[MAX_VERTS][MAX_VERTS];
+        nVerts = 0;
+        priorityQ = new PriorityQ();
+        ds = null;
+        for (int j = 0; j < MAX_VERTS; j++) {
+            for (int k = 0; k < MAX_VERTS; k++) {
+                adjMat[j][k] = this.notConnectedFlagNumber;
+            }
+        }
+    }
+
+    public void addVertex(char lab) {
+        vertexList[nVerts++] = new Vertex(lab);
+    }
+
+    public void addEdge(int start, int end, int distance) {
+        adjMat[start][end] = distance;
+    }
+
+    public void displayVertex(int v) {
+        System.out.print(vertexList[v].label);
+    }
+
+    public void mst() {
+        System.out.println("++++ mst ++++");
+        //this.printMatrix(adjMat);
+        int adjMat1[][] = this.removeLoop(adjMat);
+        //this.printMatrix(adjMat1);
+        int adjMatFinal[][] = this.removeParallelEdges(adjMat1);
+        //this.printMatrix(adjMatFinal);
+        priorityQ.prepareQueue(adjMatFinal, nVerts);
+
+        // now building mst
+        int[][] mst = new int[MAX_VERTS][MAX_VERTS];
+        for (int j = 0; j < MAX_VERTS; j++) {
+            for (int k = 0; k < MAX_VERTS; k++) {
+                if (j == k) {
+                    mst[j][k] = 0;
+                    continue;
+                }
+                mst[j][k] = this.notConnectedFlagNumber;
+            }
+        }
+
+        //this.printMatrix(mst);
+        //System.out.println(this.priorityQ.size());
+        this.priorityQ.printQArray();
+
+        // need disjoint set approach for detectig cycle
+        Character[] items = new Character[this.nVerts];
+        for (int i = 0; i < this.nVerts; i++) {
+            //System.out.println(this.vertexList[i].label);
+            items[i] = this.vertexList[i].label;
+        }
+        this.ds = new DisjointSet(items);
+        this.ds.printRelation();
+
+        while (!this.priorityQ.isEmpty()) {
+            Edge e = this.priorityQ.removeMin();
+            //System.out.println(e);
+            //this.priorityQ.printQArray();
+            int srcVertexIndex = e.srcVert;
+            int destVertexINdex = e.destVert;
+            int distance = e.distance;
+
+            if (this.isCycleFormForConnectedTwoVertices(srcVertexIndex, destVertexINdex)) {
+                //System.out.println("Already in tree");
+                continue;
+            }
+
+            //System.out.println(e);
+            this.vertexList[srcVertexIndex].isInTree = true;
+            this.vertexList[destVertexINdex].isInTree = true;
+
+            mst[srcVertexIndex][destVertexINdex] = distance;
+            mst[destVertexINdex][srcVertexIndex] = distance;
+            //this.printMatrix(mst);
+        }
+        this.ds.printRelation();
+        this.printMatrix(mst);
+        System.out.println("---- mst ----");
+    }
+
+    public int getAdjUnvisitedVertex(int v) {
+        for (int j = 0; j < nVerts; j++) {
+            if (adjMat[v][j] == 1 && vertexList[j].wasVisited == false) {
+                return j;
+            }
+        }
+        return -1;
+    }
+
+    private int[][] removeLoop(int[][] adjMat) {
+        for (int i = 0; i < this.nVerts; i++) {
+            adjMat[i][i] = 0;
+        }
+        return adjMat;
+    }
+
+    private int[][] removeParallelEdges(int[][] adjMat1) {
+        for (int i = 0; i < nVerts; i++) {
+            for (int j = i + 1; j < nVerts; j++) {
+                // for any two vertex at most two parallel edeges could be found
+                int oneEdge = adjMat1[i][j];
+                int anotherEdge = adjMat1[j][i];
+                if (oneEdge <= anotherEdge) {
+                    adjMat1[i][j] = oneEdge;
+                    adjMat1[j][i] = oneEdge;
+                } else {
+                    adjMat1[i][j] = anotherEdge;
+                    adjMat1[j][i] = anotherEdge;
+                }
+            }
+        }
+        return adjMat1;
+    }
+
+    private void printMatrix(int[][] matrix) {
+        System.out.println("+++++ printMatrix +++++++");
+        for (int j = 0; j < nVerts; j++) {
+            for (int k = 0; k < nVerts; k++) {
+                System.out.print(matrix[j][k] + "  ");
+            }
+            System.out.println("");
+        }
+        System.out.println("----- printMatrix --------");
+    }
+
+    private boolean isCycleFormForConnectedTwoVertices(int srcVertexIndex, int destVertexINdex) {
+        System.out.println("++++++++ isCycleFormForConnectedTwoVertices ++++++++");
+        // two vertex has the same representative then it will make cycle
+        Character srcVertexLabel = this.vertexList[srcVertexIndex].label;
+        Character desVertexLabel = this.vertexList[destVertexINdex].label;
+
+        Character srcVertexRepresentative = this.ds.Find(srcVertexLabel);
+        Character desVertexRepresentative = this.ds.Find(desVertexLabel);
+
+        if (srcVertexRepresentative == desVertexRepresentative) {
+            // will be created a loop
+            return true;
+        }
+        //this.ds.Union(srcVertexRepresentative, desVertexRepresentative);
+        this.ds.Union(srcVertexLabel, desVertexLabel);
+        System.out.println("-------- isCycleFormForConnectedTwoVertices --------");
+        return false;
+    }
+
+    private boolean isCycleFormForConnectedTwoVerticesBackUP(int[][] mst, int srcVertexIndex, int destVertexINdex, int distance) {
+        System.out.println("++++++++ isCycleFormForConnectedTwoVertices ++++++++");
+        // add two vertices
+        mst[srcVertexIndex][destVertexINdex] = distance;
+        mst[destVertexINdex][srcVertexIndex] = distance;
+        // check cycle
+        // if cycle exist, backtrack two vertices information
+        System.out.println("-------- isCycleFormForConnectedTwoVertices --------");
+        return false;
+    }
+
+}
+
+public class Main {
+
+    public static void main(String[] args) {
+        Graph theGraph = new Graph();
+        // example taken from , https://www.tutorialspoint.com/data_structures_algorithms/kruskals_spanning_tree_algorithm.htm
+        theGraph.addVertex('A');    // 0
+        theGraph.addVertex('B');    // 1
+        theGraph.addVertex('C');    // 2
+        theGraph.addVertex('D');    // 3
+        theGraph.addVertex('S');    // 4
+        theGraph.addVertex('T');    // 5
+
+        theGraph.addEdge(0, 1, 6); // AB 6
+        theGraph.addEdge(0, 2, 3); // AC 3
+        theGraph.addEdge(0, 4, 7); // AS 7
+
+        theGraph.addEdge(1, 0, 9); // BA 9
+        theGraph.addEdge(1, 2, 4); // BC 4
+        theGraph.addEdge(1, 3, 2); // BD 2
+        theGraph.addEdge(1, 5, 5); // BT 5
+
+        theGraph.addEdge(2, 0, 3); // CA 3
+        theGraph.addEdge(2, 1, 4); // CB 4
+        theGraph.addEdge(2, 2, 1); // CC 1
+        theGraph.addEdge(2, 3, 3); // CD 3
+        theGraph.addEdge(2, 4, 8); // CS 8
+
+        theGraph.addEdge(3, 1, 2); // DB 2
+        theGraph.addEdge(3, 2, 3); // DC 3
+        theGraph.addEdge(3, 5, 2); // DT 2
+
+        theGraph.addEdge(4, 0, 7); // SA 7
+        theGraph.addEdge(4, 2, 8); // SC 8
+
+        theGraph.addEdge(5, 1, 5); // TB 5
+        theGraph.addEdge(5, 3, 2); // TD 2
+
+        //System.out.print("Spanning Tree Visits : ");
+        theGraph.mst();
+        System.out.println();
+    }
+}
+
+Output:
+++++ mst ++++
+++++++ printQArray
+srcVert 1, destVert:3, distance:2
+srcVert 3, destVert:5, distance:2
+srcVert 0, destVert:2, distance:3
+srcVert 2, destVert:3, distance:3
+srcVert 1, destVert:2, distance:4
+srcVert 1, destVert:5, distance:5
+srcVert 0, destVert:1, distance:6
+srcVert 0, destVert:4, distance:7
+srcVert 2, destVert:4, distance:8
+----- printQArray
+++++++++++++++
+{A=A, B=B, C=C, S=S, D=D, T=T}
+--------------
+++++++++ isCycleFormForConnectedTwoVertices ++++++++
++++++ Union +++++++
+B : D
+------ Union -------
+-------- isCycleFormForConnectedTwoVertices --------
+++++++++ isCycleFormForConnectedTwoVertices ++++++++
++++++ Union +++++++
+D : T
+------ Union -------
+-------- isCycleFormForConnectedTwoVertices --------
+++++++++ isCycleFormForConnectedTwoVertices ++++++++
++++++ Union +++++++
+A : C
+------ Union -------
+-------- isCycleFormForConnectedTwoVertices --------
+++++++++ isCycleFormForConnectedTwoVertices ++++++++
++++++ Union +++++++
+C : D
+------ Union -------
+-------- isCycleFormForConnectedTwoVertices --------
+++++++++ isCycleFormForConnectedTwoVertices ++++++++
+++++++++ isCycleFormForConnectedTwoVertices ++++++++
+++++++++ isCycleFormForConnectedTwoVertices ++++++++
+++++++++ isCycleFormForConnectedTwoVertices ++++++++
++++++ Union +++++++
+A : S
+------ Union -------
+-------- isCycleFormForConnectedTwoVertices --------
+++++++++ isCycleFormForConnectedTwoVertices ++++++++
+++++++++++++++
+{A=C, B=D, C=T, S=S, D=T, T=S}
+--------------
++++++ printMatrix +++++++
+0  -1  3  -1  7  -1  
+-1  0  -1  2  -1  -1  
+3  -1  0  3  -1  -1  
+-1  2  3  0  -1  2  
+7  -1  -1  -1  0  -1  
+-1  -1  -1  2  -1  0  
+----- printMatrix --------
+---- mst ----
+:END
+
+Program 3.2 MST-prims algorithm
+:START
+package main;
+
+import java.util.HashMap;
+import java.util.Map;
+
+class Graph {
+
+    int nVerts;
+    int notConnectedFlagNumber = -1;
+
+    public Graph() {
+        nVerts = 6;
+    }
+
+    public void mst(int adjMat[][], int startingVertexIndex) {
+        System.out.println("++++ mst ++++");
+        int adjMat1[][] = this.removeLoop(adjMat);
+        int adjMatFinal[][] = this.removeParallelEdges(adjMat1);
+
+        boolean[] verticesInMST = new boolean[this.nVerts];
+        int[] minQ = new int[this.nVerts];
+        int[] MSTParentRelation = new int[this.nVerts];
+        int[] mstPath = new int[this.nVerts];
+
+        for (int i = 0; i < this.nVerts; i++) {
+            verticesInMST[i] = false;
+            minQ[i] = Integer.MAX_VALUE;
+            mstPath[i] = -1;
+        }
+
+        // setting the starting point in Q
+        minQ[startingVertexIndex] = 0;
+        MSTParentRelation[startingVertexIndex] = -1;
+
+        for (int i = 0; i < this.nVerts; i++) {
+            int u = nextVertex(minQ, verticesInMST);
+            verticesInMST[u] = true;
+            mstPath[i] = u;
+
+            for (int v = 0; v < this.nVerts; v++) {
+                if (adjMatFinal[u][v] != 0 && adjMatFinal[u][v] != this.notConnectedFlagNumber && verticesInMST[v] == false && adjMatFinal[u][v] < minQ[v]) {
+                    minQ[v] = adjMatFinal[u][v];
+                    MSTParentRelation[v] = u;
+                }
+            }
+        }
+        this.printMSTPath(mstPath, adjMatFinal, startingVertexIndex, MSTParentRelation);
+        System.out.println("---- mst ----");
+    }
+
+    private int[][] removeLoop(int[][] adjMat) {
+        for (int i = 0; i < this.nVerts; i++) {
+            adjMat[i][i] = 0;
+        }
+        return adjMat;
+    }
+
+    private int[][] removeParallelEdges(int[][] adjMat1) {
+        for (int i = 0; i < nVerts; i++) {
+            for (int j = i + 1; j < nVerts; j++) {
+                // for any two vertex at most two parallel edeges could be found
+                int oneEdge = adjMat1[i][j];
+                int anotherEdge = adjMat1[j][i];
+                if (oneEdge <= anotherEdge) {
+                    adjMat1[i][j] = oneEdge;
+                    adjMat1[j][i] = oneEdge;
+                } else {
+                    adjMat1[i][j] = anotherEdge;
+                    adjMat1[j][i] = anotherEdge;
+                }
+            }
+        }
+        return adjMat1;
+    }
+
+    int nextVertex(int[] minQ, boolean verticesInMST[]) {
+        int min = Integer.MAX_VALUE, vertexIndex = -1;
+
+        for (int v = 0; v < this.nVerts; v++) {
+            if (verticesInMST[v] == false && minQ[v] < min) {
+                min = minQ[v];
+                vertexIndex = v;
+            }
+        }
+        return vertexIndex;
+    }
+
+    private void printMatrix(int[][] matrix) {
+        System.out.println("+++++ printMatrix +++++++");
+        for (int j = 0; j < nVerts; j++) {
+            for (int k = 0; k < nVerts; k++) {
+                System.out.print(matrix[j][k] + "  ");
+            }
+            System.out.println("");
+        }
+        System.out.println("----- printMatrix --------");
+    }
+
+    private void printMSTPath(int[] mstPath, int graph[][], int startingIndex, int[] MSTRelation) {
+        System.out.println("Starting vertex:" + startingIndex);
+        for (int i = 1; i < mstPath.length; i++) {
+            System.out.println(MSTRelation[mstPath[i]] + " -> " + mstPath[i]);
+        }
+    }
+}
+
+public class Main {
+
+    public static void main(String[] args) {
+        Graph theGraph = new Graph();
+        // example build from , https://www.tutorialspoint.com/data_structures_algorithms/prims_spanning_tree_algorithm.htm
+        int graph[][] = new int[][]{
+            {0, 6, 3, -1, 7, -1},
+            {9, 0, 4, 2, -1, 5},
+            {3, 4, 1, 3, 8, -1},
+            {-1, 2, 3, 0, -1, 2},
+            {7, -1, 8, -1, 0, -1},
+            {-1, 5, -1, 2, -1, 0}
+        };
+        theGraph.mst(graph, 4);
+    }
+}
+Output:
+++++ mst ++++
+Starting vertex:4
+4 -> 0
+0 -> 2
+2 -> 3
+3 -> 1
+3 -> 5
+---- mst ----
+:END
+
+Program 4: Single source shortestPath: Bellman-ford Algorithm
+:START
+package main;
+
+import java.util.ArrayList;
+
+class Vertex {
+
+    public char label;// label (e.g. ‘A’)
+    public boolean wasVisited;
+    public boolean isInTree;
+    public Vertex predecessor;
+    public int currentshortestDistance;
+
+    public Vertex(char lab) {
+        label = lab;
+        wasVisited = false;
+        isInTree = false;
+        predecessor = null;
+    }
+}
+
+class Edge {
+
+    public int srcVert;
+    public int destVert;
+    public int distance;
+
+    public Edge(int sv, int dv, int d) {
+        srcVert = sv;
+        destVert = dv;
+        distance = d;
+    }
+
+    public String toString() {
+        return "srcVert " + srcVert + ", destVert:" + destVert + ", distance:" + distance;
+    }
+}
+
+class Graph {
+
+    private final int MAX_VERTS = 20;
+    private Vertex vertexList[];
+    private int adjMat[][];
+    int nVerts;
+    int notConnectedFlagNumber = Integer.MAX_VALUE;
+    ArrayList<Edge> edgeList = new ArrayList<>();
+
+    public Graph() {
+        vertexList = new Vertex[MAX_VERTS];
+        adjMat = new int[MAX_VERTS][MAX_VERTS];
+        nVerts = 0;
+        for (int j = 0; j < MAX_VERTS; j++) {
+            for (int k = 0; k < MAX_VERTS; k++) {
+                adjMat[j][k] = this.notConnectedFlagNumber;
+            }
+        }
+    }
+
+    public void addVertex(char lab) {
+        vertexList[nVerts++] = new Vertex(lab);
+    }
+
+    public void addEdge(int start, int end, int distance) {
+        adjMat[start][end] = distance;
+        this.edgeList.add(new Edge(start, end, distance));
+    }
+
+    public boolean shortestPath(int sourceVertex) {
+        // initialize single source
+        for (int i = 0; i < nVerts; i++) {
+            Vertex v = vertexList[i];
+            v.currentshortestDistance = Integer.MAX_VALUE;
+            v.predecessor = null;
+        }
+        this.vertexList[sourceVertex].currentshortestDistance = 0;
+
+        System.out.println("Edge Number:" + edgeList.size());
+        System.out.println("Before Relaxing:");
+        for (int i = 0; i < nVerts; i++) {
+            System.out.println(this.vertexList[i].label + " " + this.vertexList[i].currentshortestDistance);
+        }
+
+        for (int i = 0; i < nVerts - 1; i++) {
+            for (Edge e : edgeList) {
+                // relaxing
+                int d = e.distance;
+                Vertex u = this.vertexList[e.srcVert];
+                Vertex v = this.vertexList[e.destVert];
+
+                if (v.currentshortestDistance > u.currentshortestDistance + d) {
+                    v.currentshortestDistance = u.currentshortestDistance + d;
+                    v.predecessor = u;
+                }
+            }
+        }
+        System.out.println("After relaxing:");
+        for (int i = 1; i < nVerts; i++) {
+            System.out.println(this.vertexList[i].predecessor.label + " -> " + this.vertexList[i].label + " " + this.vertexList[i].currentshortestDistance);
+        }
+
+        for (Edge e : edgeList) {
+            int d = e.distance;
+            Vertex u = this.vertexList[e.srcVert];
+            Vertex v = this.vertexList[e.destVert];
+            if (v.currentshortestDistance > u.currentshortestDistance + d) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    public void displayVertex(int v) {
+        System.out.print(vertexList[v].label);
+    }
+}
+
+public class Main {
+
+    public static void main(String[] args) {
+        Graph theGraph = new Graph();
+        // graph has been taken from jenny's lecture
+        theGraph.addVertex('A');    // 0
+        theGraph.addVertex('B');    // 1
+        theGraph.addVertex('C');    // 2
+        theGraph.addVertex('D');    // 3
+        theGraph.addVertex('E');    // 4
+        theGraph.addVertex('F');    // 5
+
+        theGraph.addEdge(0, 1, 6); // AB 6
+        theGraph.addEdge(0, 2, 4); // AC 4
+        theGraph.addEdge(0, 3, 5); // AD 5
+
+        theGraph.addEdge(1, 4, -1); // BE -1
+
+        theGraph.addEdge(2, 1, -2); // CB -2
+        theGraph.addEdge(2, 4, 3); // CE 3
+
+        theGraph.addEdge(3, 2, -2); // DC -2
+        theGraph.addEdge(3, 5, -1); // DF -1
+
+        theGraph.addEdge(4, 5, 3); // EF 3
+        theGraph.shortestPath(0);
+    }
+}
+Output:
+
+Edge Number:9
+Before Relaxing:
+A 0
+B 2147483647
+C 2147483647
+D 2147483647
+E 2147483647
+F 2147483647
+After relaxing:
+C -> B 1
+D -> C 3
+A -> D 5
+B -> E 0
+E -> F 3
+BUILD SUCCESSFUL (total time: 0 seconds)
+:END
+
+Program 5: Single source shortestPath: Dijkstras Algorithm
+:START
+package main;
+
+class DistPar {
+
+    public int distance;
+    public int parentVert;
+
+    public DistPar(int pv, int d) {
+        distance = d;
+        parentVert = pv;
+    }
+}
+
+class Vertex {
+
+    public char label;
+    public boolean isInTree;
+
+    public Vertex(char lab) {
+        label = lab;
+        isInTree = false;
+    }
+}
+
+class Graph {
+
+    private final int MAX_VERTS = 20;
+    private final int INFINITY = 1000000;
+    private Vertex vertexList[];
+    private int adjMat[][];
+    private int nVerts;
+    private int nTree;
+    private DistPar sPath[];
+    private int currentVert;
+    private int startToCurrent;
+
+    public Graph() {
+        vertexList = new Vertex[MAX_VERTS];
+        // adjacency matrix
+        adjMat = new int[MAX_VERTS][MAX_VERTS];
+        nVerts = 0;
+        nTree = 0;
+        // set adjacency matrix
+        for (int j = 0; j < MAX_VERTS; j++) {
+            for (int k = 0; k < MAX_VERTS; k++) {
+                adjMat[j][k] = INFINITY;
+            }
+        }
+        sPath = new DistPar[MAX_VERTS];
+    }
+
+    public void addVertex(char lab) {
+        vertexList[nVerts++] = new Vertex(lab);
+    }
+
+    public void addEdge(int start, int end, int weight) {
+        adjMat[start][end] = weight;
+    }
+
+    public void path() {
+        int startTree = 0;             // start at vertex 0
+        vertexList[startTree].isInTree = true;
+        nTree = 1;                     // put it in tree// transfer row of distances from adjMat to sPath
+        for (int j = 0; j < nVerts; j++) {
+            int tempDist = adjMat[startTree][j];
+            sPath[j] = new DistPar(startTree, tempDist);
+        }
+        while (nTree < nVerts) {
+            int indexMin = getMin();   // get minimum from sPath
+            int minDist = sPath[indexMin].distance;
+            if (minDist == INFINITY) {
+                System.out.println("There are unreachable vertices");
+                break;
+            } else {
+                // reset currentVert
+                currentVert = indexMin;  // to closest vert
+                startToCurrent = sPath[indexMin].distance;// 
+            }// put current vertex in tree
+            vertexList[currentVert].isInTree = true;
+            nTree++;
+            adjust_sPath();             // update sPath[] array
+        }
+
+        displayPaths();
+        nTree = 0;
+        for (int j = 0; j < nVerts; j++) {
+            vertexList[j].isInTree = false;
+        }
+    }
+
+    public int getMin() {
+        int minDist = INFINITY;
+        int indexMin = 0;
+        for (int j = 1; j < nVerts; j++) {
+            if (!vertexList[j].isInTree && sPath[j].distance < minDist) {
+                minDist = sPath[j].distance;
+                indexMin = j; // update minimum
+            }
+            
+        }
+        return indexMin;
+    }
+
+    public void adjust_sPath() {
+        int column = 1;
+        while (column < nVerts) {
+            if (vertexList[column].isInTree) {
+                column++;
+                continue;
+            }
+
+            int currentToFringe = adjMat[currentVert][column];
+            int startToFringe = startToCurrent + currentToFringe;
+            int sPathDist = sPath[column].distance;
+            if (startToFringe < sPathDist) {
+                sPath[column].parentVert = currentVert;
+                sPath[column].distance = startToFringe;
+            }
+            column++;
+        }
+    }
+
+    public void displayPaths() {
+        for (int j = 0; j < nVerts; j++) {
+            System.out.print(vertexList[j].label + "=");
+            if (sPath[j].distance == INFINITY) {
+                System.out.print("inf");                  // inf
+            } else {
+                System.out.print(sPath[j].distance);      // 50
+            }
+            char parent = vertexList[sPath[j].parentVert].label;
+            System.out.print("(" + parent + ") ");       // (A)
+        }
+        System.out.println("");
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        // example are taken from robert lafore book
+        Graph theGraph = new Graph();
+        theGraph.addVertex('A');     // 0  (start)
+        theGraph.addVertex('B');     // 1
+        theGraph.addVertex('C');     // 2
+        theGraph.addVertex('D');     // 3
+        theGraph.addVertex('E');     // 4
+        
+        theGraph.addEdge(0, 1, 50);  // AB 50
+        theGraph.addEdge(0, 3, 80);  // AD 80
+        theGraph.addEdge(1, 2, 60);  // BC 60
+        theGraph.addEdge(1, 3, 90);  // BD 90
+        theGraph.addEdge(2, 4, 40);  // CE 40
+        theGraph.addEdge(3, 2, 20);  // DC 20
+        theGraph.addEdge(3, 4, 70);  // DE 70
+        theGraph.addEdge(4, 1, 50);  // EB 50
+        
+        theGraph.path();
+    }
+}
+Output:
+run:
+A=inf(A) B=50(A) C=100(D) D=80(A) E=140(C) 
+BUILD SUCCESSFUL (total time: 0 seconds)
+
+:END
+
+Program 4: all-pairs shortest-paths - Floyd-Warshall Algorithm
+START:
+package main;
+
+class FloydWarshall {
+
+    private int nVerts;
+    private int[][] graph;
+    private int inf;
+
+    public FloydWarshall(int nVerts, int[][] graph, int inf) {
+        this.nVerts = nVerts;
+        this.inf = inf;
+        this.graph = new int[this.nVerts][this.nVerts];
+        for (int i = 0; i < this.nVerts; i++) {
+            for (int j = 0; j < this.nVerts; j++) {
+                this.graph[i][j] = graph[i][j];
+            }
+        }
+    }
+
+    public void floydWarshall() {
+        int dist[][] = new int[this.nVerts][this.nVerts];
+
+        for (int i = 0; i < this.nVerts; i++) {
+            for (int j = 0; j < this.nVerts; j++) {
+                dist[i][j] = graph[i][j];
+            }
+        }
+
+        for (int i = 0; i < this.nVerts; i++) {
+            for (int j = 0; j < this.nVerts; j++) {
+                for (int k = 0; k < this.nVerts; k++) {
+                    if (dist[j][i] + dist[i][k] < dist[j][k]) {
+                        dist[j][k] = dist[j][i] + dist[i][k];
+                    }
+                }
+            }
+        }
+        this.displayPaths(dist);
+    }
+
+    private void displayPaths(int dist[][]) {
+        for (int i = 0; i < nVerts; i++) {
+            for (int j = 0; j < nVerts; ++j) {
+                if (dist[i][j] == this.inf) {
+                    System.out.print("INF ");
+                } else {
+                    System.out.print(dist[i][j] + "   ");
+                }
+            }
+            System.out.println("");
+        }
+    }
+
+}
+
+public class Main {
+
+    public static void main(String[] args) {
+        int inf = 999;
+        // example are taken from https://www.tutorialspoint.com/Floyd-Warshall-Algorithm
+        int graph[][] = new int[][]{
+            {0, 3, 6, 999, 999, 999, 999},
+            {3, 0, 2, 1, inf, inf, inf},
+            {6, 2, 0, 1, 4, 2, inf},
+            {inf, 1, 1, 0, 2, inf, 4},
+            {inf, inf, 4, 2, 0, 2, 1},
+            {inf, inf, 2, inf, 2, 0, 1},
+            {inf, inf, inf, 4, 1, 1, 0}
+        };
+
+        FloydWarshall fw = new FloydWarshall(7, graph, inf);
+        fw.floydWarshall();
+    }
+}
+Output:
+0   3   5   4   6   7   7   
+3   0   2   1   3   4   4   
+5   2   0   1   3   2   3   
+4   1   1   0   2   3   3   
+6   3   3   2   0   2   1   
+7   4   2   3   2   0   1   
+7   4   3   3   1   1   0
+
+:END

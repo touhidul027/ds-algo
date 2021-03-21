@@ -364,8 +364,330 @@ Output:
 [ {(5,5),(6,4)}  ,  {(4,3),(8,5)} ]
 [ {(6,5),(8,3)}  ,  {(4,3),(8,5)} ]
 Intersected
+
+Program 3: Finding convex hull using graham scans algorithm
+package main;
+
+import java.util.Scanner;
+import java.util.Arrays;
+import java.util.Stack;
+
+class Point implements Comparable<Point> {
+
+    public int x;
+    public int y;
+    public boolean isStart;
+
+    public Point(int x, int y) {
+        this.x = x;
+        this.y = y;
+    }
+
+    public Point(int x, int y, boolean isStart) {
+        this.x = x;
+        this.y = y;
+        this.isStart = isStart;
+    }
+
+    //sort in ascending order by x first, then y
+    @Override
+    public int compareTo(Point o) {
+        if (this.x == o.x) {
+            return (this.y - o.y);
+        } else {
+            return (this.x - o.x);
+        }
+    }
+
+    @Override
+    public String toString() {
+        return "(" + this.x + "," + this.y + ")";
+    }
+}
+
+class ConvexHull {
+
+    private Point[] points;
+    private int maxPoint;
+    private int currentPointsNumber;
+
+    public ConvexHull(int maxPoint) {
+        this.points = new Point[maxPoint];
+        this.maxPoint = maxPoint;
+        this.currentPointsNumber = 0;
+    }
+
+    public void insert(Point p) {
+        this.points[this.currentPointsNumber++] = p;
+    }
+
+    public void delete(Point p) {
+        boolean copyNextPointToCurrentPosition = false;
+        for (int i = 0; i < this.currentPointsNumber; i++) {
+            Point currentPoint = this.points[i];
+            if (copyNextPointToCurrentPosition || currentPoint.equals(p)) {
+                copyNextPointToCurrentPosition = true;
+                this.points[i] = this.points[i + 1];
+            }
+        }
+        if (copyNextPointToCurrentPosition) {
+            this.currentPointsNumber--;
+        }
+    }
+
+    public void grahamScan() {
+        // sort points first according to y and then x
+        Arrays.sort(this.points, 0, this.currentPointsNumber, (i, j) -> {
+            if (i.y == j.y) {
+                return (i.x - j.x);
+            } else {
+                return (i.y - j.y);
+            }
+        });
+        //Arrays.sort(this.points, 0, this.currentPointsNumber, (i, j) -> (i.y == j.y) ? (i.x - j.x) : (i.y - j.y));
+
+        // sort again from index 2 by polar angle, if same polar angle found take the furthest and remove others
+        Point[] ps = this.sortedArrayByPolarAngle(Arrays.copyOfRange(this.points, 1, this.currentPointsNumber));
+
+        Stack<Point> s = new Stack<>();
+        s.push(this.points[0]);
+        s.push(ps[0]);
+        s.push(ps[1]);
+        // applying left right rule
+        for (int i = 2; i < ps.length; i++) {
+            while (rightTurn(s.get(s.size() - 1), s.get(s.size() - 2), ps[i])) {
+                s.pop();
+            }
+            s.push(ps[i]);
+        }
+
+        // s is now containing points that made up convex hull
+        System.out.println(s.toString());
+    }
+
+    // test for clockwise and anti-clockwise, then return result
+    private boolean rightTurn(Point a, Point b, Point c) {
+        int val = (b.y - a.y) * (c.x - b.x) - (b.x - a.x) * (c.y - b.y);
+        return val > 0;
+    }
+
+    private Point[] sortedArrayByPolarAngle(Point[] ps) {
+        //System.out.println(Arrays.toString(ps));
+        int j = 0;//for next element  
+        for (int i = 0; i < ps.length - 1; i++) {
+            if (Math.atan2(ps[i].x, ps[i].y) != Math.atan2(ps[i + 1].x, ps[i + 1].y)) {
+                ps[j++] = ps[i];
+            }
+        }
+        ps[j++] = ps[ps.length - 1];
+//        for (int i = 0; i < j; i++) {
+//            System.out.print(" " + ps[i]);
+//        }
+        Arrays.sort(ps, 0, j, (a, b) -> {
+            if (Math.atan2(a.x, a.y) - Math.atan2(b.x, b.y) > 0) {
+                return 1;
+            } else {
+                return -1;
+            }
+        });
+//        System.out.println("");
+//        for (int i = 0; i < j; i++) {
+//            System.out.print(" " + ps[i]);
+//        }
+        return Arrays.copyOfRange(ps, 0, j);
+    }
+}
+
+public class Main {
+
+    public static void main(String[] args) {
+        Scanner scan = new Scanner(System.in);
+        ConvexHull cvh = new ConvexHull(50);
+        // {0, 3}, {1, 1}, {2, 2}, {4, 4},{0, 0}, {1, 2}, {3, 1}, {3, 3}
+        cvh.insert(new Point(0, 3));
+        cvh.insert(new Point(1, 1));
+        cvh.insert(new Point(2, 2));
+        cvh.insert(new Point(1, 0));
+        cvh.insert(new Point(2, 0));
+        cvh.insert(new Point(4, 4));
+        cvh.insert(new Point(5, 0));
+        cvh.insert(new Point(0, 0));
+        cvh.insert(new Point(1, 2));
+        cvh.insert(new Point(3, 1));
+        cvh.insert(new Point(3, 3));
+        cvh.grahamScan();
+    }
+}
+output:
+[(0,0), (0,3), (4,4), (5,0)]
 :END
 
-Program 3: Finding the convex hull: Graham Scan Algorithm
-youtube ref:https://www.youtube.com/watch?v=VP9ylElm1yY [Convex Hull Algorithm Presentation]
 
+Program 4: Finding the Closest Pair of Points
+package main;
+
+import java.awt.Point;
+import java.util.ArrayList;
+import java.util.Scanner;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Stack;
+
+class Pair {
+
+    private Point a;
+    private Point b;
+    private double distance;
+
+    public Pair(Point a, Point b) {
+        this.a = a;
+        this.b = b;
+        this.distance = Math.sqrt(Math.pow(a.x - b.x, 2) + Math.pow(a.y - b.y, 2));
+    }
+
+    public double getDistance() {
+        return this.distance;
+    }
+
+    public String toString() {
+        return new StringBuilder()
+                .append("[")
+                .append("(")
+                .append(this.a.x)
+                .append(",")
+                .append(this.a.y)
+                .append(")")
+                .append(",")
+                .append("(")
+                .append(this.b.x)
+                .append(",")
+                .append(this.b.y)
+                .append(")")
+                .append("]")
+                .append(" ")
+                .append("Distance:")
+                .append(this.distance)
+                .toString();
+    }
+}
+
+class ClosestPair {
+
+    private List<Point> points;
+    private int nPoints;
+    private Pair closestPair;
+
+    public ClosestPair(ArrayList<Point> points) {
+        this.points = points;
+        this.nPoints = points.size();
+        this.closestPair = null;
+    }
+
+    // brute force method
+    public Pair getClosestPairBruteForce() {
+        double minLength = Integer.MAX_VALUE;
+        for (int i = 0; i < this.nPoints - 1; i++) {
+            for (int j = i + 1; j < this.nPoints; j++) {
+                Pair pair = new Pair(this.points.get(i), this.points.get(j));
+                if (pair.getDistance() < minLength) {
+                    minLength = pair.getDistance();
+                    this.closestPair = pair;
+                }
+            }
+        }
+        return this.closestPair;
+    }
+
+    public Pair getClosestPairDivideAndConquer() {
+        List<Point> sortedPoints = this.points;
+        Collections.sort(sortedPoints, (o1, o2) -> Integer.signum(o1.x - o2.x));
+        return divideAndConquerAux(sortedPoints);
+    }
+
+    private Pair divideAndConquerAux(List<Point> points) {
+        int N = points.size();
+        if (N <= 3) {
+            return bruteForce(points);
+        }
+        int mid = N / 2;
+        Point midPoint = points.get(mid);
+
+        Pair bl = divideAndConquerAux(points.subList(0, mid));
+        Pair br = divideAndConquerAux(points.subList(mid, N));
+
+        Pair closestSoFar = bl;
+        if (br.getDistance() < bl.getDistance()) {
+            closestSoFar = br;
+        }
+
+        List<Point> strip = new ArrayList<>();
+        for (int i = 0; i < N; i++) {
+            if (Math.abs(points.get(i).x - midPoint.x) < closestSoFar.getDistance()) {
+                strip.add(points.get(i));
+            }
+        }
+
+        return bestWithStrip(strip, closestSoFar);
+    }
+
+    private Pair bestWithStrip(List<Point> points, Pair closestSoFar) {
+        Pair best = closestSoFar;
+        List<Point> sortedPoints = new ArrayList<>(points);
+        Collections.sort(sortedPoints, (o1, o2) -> Integer.signum(o1.y - o2.y));
+
+        for (int i = 0; i < points.size(); i++) {
+            for (int j = i + 1; j < points.size()
+                    && (points.get(j).y - points.get(i).y) < best.getDistance(); j++) {
+                Pair stripPair = new Pair(points.get(i), points.get(j));
+                if (stripPair.getDistance() < best.getDistance()) {
+                    best = stripPair;
+                }
+            }
+        }
+
+        return best;
+    }
+
+    // helper method for divide and conquer approach
+    private Pair bruteForce(List<Point> points) {
+        Pair tempPair = null;
+        double minLength = Integer.MAX_VALUE;
+        for (int i = 0; i < points.size() - 1; i++) {
+            for (int j = i + 1; j < points.size(); j++) {
+                Pair pair = new Pair(points.get(i), points.get(j));
+                if (pair.getDistance() < minLength) {
+                    minLength = pair.getDistance();
+                    tempPair = pair;
+                }
+            }
+        }
+        return tempPair;
+    }
+
+}
+
+public class Main {
+
+    public static void main(String[] args) {
+        List<Point> points = new ArrayList<>();
+        points.add(new Point(2, 3));
+        points.add(new Point(12, 30));
+        points.add(new Point(40, 50));
+        points.add(new Point(5, 1));
+        points.add(new Point(12, 10));
+        points.add(new Point(3, 4));
+
+        ClosestPair closest = new ClosestPair((ArrayList<Point>) points);
+        Pair p = closest.getClosestPairBruteForce();
+        System.out.println(p);
+        p = closest.getClosestPairDivideAndConquer();
+        System.out.println(p);
+    }
+}
+
+/* output
+[(2,3),(3,4)] Distance:1.4142135623730951
+[(2,3),(3,4)] Distance:1.4142135623730951
+ */
+:END

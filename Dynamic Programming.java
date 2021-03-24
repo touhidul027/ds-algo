@@ -1,5 +1,6 @@
 Dynamic Programming
 -------------------
+// see slide #2, https://slideplayer.com/slide/3265918/
 //implementing Rod cutting algorithm : top-down approach
 Program : A
 package ds_algo_github;

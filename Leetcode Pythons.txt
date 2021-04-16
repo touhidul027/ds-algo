@@ -1,0 +1,52 @@
+Category: Maths
+---------------
+7. Reverse Integer
+https://leetcode.com/problems/reverse-integer/
+V7.1
+from typing import List
+class Solution:
+    def reverse(self, x: int) -> int:
+        isNegative = False
+        if x < 0:
+            isNegative = True
+            x = -1 * x
+        org = str(x)
+        indexLen = len(org) - 1
+        revChars = []
+        i = 0
+        while indexLen >= 0:
+            revChars.insert(i,org[indexLen])
+            i = i + 1
+            indexLen = indexLen - 1
+        return self.getReversedNumber(revChars,isNegative)
+
+    def getReversedNumber(self, revChars:List, negative:bool) -> int:
+        numFlag = 1
+        maxNum = ['2', '1', '4', '7', '4', '8', '3', '6', '4', '7']
+        if negative:
+            numFlag = -1
+            maxNum[9] = '8';
+        if len(revChars) > len(maxNum):
+            return 0
+        elif len(revChars) < len(maxNum):
+            return numFlag * self.charArrayToInteger(revChars)
+        else:
+            l = len(maxNum)
+            for i in range(l):
+                if maxNum[i] == revChars[i]:
+                    continue
+                elif maxNum[i] > revChars[i]:
+                    return numFlag * self.charArrayToInteger(revChars)
+                else:
+                    return 0
+        return numFlag * self.charArrayToInteger(revChars)
+
+    def charArrayToInteger(self, arr:List) -> int:
+        str = ''.join(arr)
+        number = int(str)
+        return number
+
+x = -12345
+obj = Solution()
+number = obj.reverse(x)
+print(number)

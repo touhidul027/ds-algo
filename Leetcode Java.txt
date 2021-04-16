@@ -1,0 +1,64 @@
+Category: Maths
+---------------
+7. Reverse Integer
+https://leetcode.com/problems/reverse-integer/
+V7.1
+class Solution {
+    public int reverse(int x) {
+        int minInt = -2147483648;
+        int maxInt = 2147483647;
+        int reversedNumber = 0;
+        boolean isNegative = false;
+        if (x < 0) {
+            isNegative = true;
+            x = -1 * x;
+        }
+        String org = String.valueOf(x);
+        int indexLen = org.length() - 1;
+        char[] revChars = new char[indexLen + 1];
+        int i = 0;
+        while (indexLen >= 0) {
+            revChars[i++] = org.charAt(indexLen--);
+        }
+        //System.out.println(revChars);
+        return this.getReversedNumber(revChars, isNegative);
+    }
+
+    public int charArrayToInteger(char[] array) {
+        String arr = new String(array);
+        int number = Integer.parseInt(arr);
+
+        return number;
+    }
+
+    private int getReversedNumber(char[] revChars, boolean negative) {
+        char[] maxNum = {'2', '1', '4', '7', '4', '8', '3', '6', '4', '7'};
+        int numFlag = 1;
+        if (negative) {
+            maxNum[9] = '8';
+            //System.out.println("Neg");
+            numFlag = -1;
+        }
+        
+        // length checking
+        if (revChars.length > maxNum.length) {
+            return 0;
+        } else if (revChars.length < maxNum.length) {
+            return  numFlag * this.charArrayToInteger(revChars);
+        } else {
+            //2147483647
+            //2137483647
+            int indexlen = maxNum.length;
+            for (int i = 0; i < indexlen; i++) {
+                if (maxNum[i] == revChars[i]) {
+                    
+                } else if (maxNum[i] > revChars[i]) {
+                    return numFlag * this.charArrayToInteger(revChars);
+                } else {
+                    return 0;
+                }
+            }
+        }
+        return numFlag * this.charArrayToInteger(revChars);
+    }
+}

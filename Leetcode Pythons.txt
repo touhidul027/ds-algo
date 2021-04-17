@@ -50,3 +50,26 @@ x = -12345
 obj = Solution()
 number = obj.reverse(x)
 print(number)
+
+
+Category: Tree
+---------------------
+226. Invert Binary Tree
+https://leetcode.com/problems/invert-binary-tree/
+V226.1
+# Definition for a binary tree node.
+# class TreeNode:
+#     def __init__(self, val=0, left=None, right=None):
+#         self.val = val
+#         self.left = left
+#         self.right = right
+class Solution:
+    def invertTree(self, root: TreeNode) -> TreeNode:
+        if root is None:
+            return root
+        tempNode = root.left
+        root.left = root.right
+        root.right = tempNode
+        root.left = self.invertTree(root.left)
+        root.right = self.invertTree(root.right)
+        return root

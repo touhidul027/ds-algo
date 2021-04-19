@@ -124,4 +124,33 @@ x = -12345
 obj = Solution()
 number = obj.reverse(x)
 print(number)
------------------------------------------------------------------------------------
+###################################################
+
+Category: DFS
+---------------------
+100. same Tree
+https://leetcode.com/problems/same-tree/
+V100.1
+START:
+# Definition for a binary tree node.
+# class TreeNode:
+#     def __init__(self, val=0, left=None, right=None):
+#         self.val = val
+#         self.left = left
+#         self.right = right
+class Solution:
+    def isSameTree(self, p: TreeNode, q: TreeNode) -> bool:
+        pPath = self.traversePath(p)
+        qPath = self.traversePath(q)
+        if pPath == qPath:
+            return True
+        return False
+
+    def traversePath(self, node:TreeNode) -> str:
+        if node is None:
+            return "N"
+        leftNodesPath = self.traversePath(node.left)
+        currentValue = node.val
+        rightNodesPath = self.traversePath(node.right)
+        return leftNodesPath + rightNodesPath + str(currentValue)
+:END

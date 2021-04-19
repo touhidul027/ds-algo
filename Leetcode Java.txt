@@ -97,3 +97,46 @@ class Solution {
         return root;
     }
 }
+
+Category: DFS
+---------------------
+100. same Tree
+https://leetcode.com/problems/same-tree/
+V100.1
+START:
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+class Solution {
+    public boolean isSameTree(TreeNode p, TreeNode q) {
+        String pPath = this.traversePath(p);
+        String qPath = this.traversePath(q);
+        if (pPath.equals(qPath)) {
+            return true;
+        }
+        return false;
+    }
+    
+    private String traversePath(TreeNode node) {
+        if (node == null) {
+            return "N";
+        }
+        String leftNodesPath = this.traversePath(node.left);
+        int currentPath = node.val;
+        String rightNodesPath = this.traversePath(node.right);
+        return leftNodesPath  + rightNodesPath + currentPath;
+    }
+}
+:END

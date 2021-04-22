@@ -1,5 +1,7 @@
 Greedy Algorithm
 ---------------------
+revise version 0.1[1,2]
+
 Program 1: Activity selection program
 package ds_algo_github;
 
@@ -174,11 +176,13 @@ class FractionalSnapSack {
         for (int i= 0; remainingWeight > 0 && i< this.currentItemsnumber; i++) {
            Item item = this.items[i];
            float itemProfit;
+           // if item weight is greater than remaining weight, then take fractional weight of this item
            if (item.weight > remainingWeight) {
                // take only remaining  weight quantity from item
                itemProfit = item.perKgProfit * remainingWeight;
                remainingWeight = 0;
            } else {
+               // take the total item
                itemProfit = item.profit;
                remainingWeight = remainingWeight - item.weight;
            }

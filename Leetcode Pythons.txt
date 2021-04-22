@@ -73,3 +73,29 @@ class Solution:
         root.left = self.invertTree(root.left)
         root.right = self.invertTree(root.right)
         return root
+
+Category: Greedy
+---------------------
+455. Assign Cookies
+https://leetcode.com/problems/assign-cookies/
+V455.1
+START:
+class Solution:
+    def findContentChildren(self, g: List[int], s: List[int]) -> int:
+        g.sort();
+        s.sort()
+        gLen = len(g)
+        sLen = len(s)
+        currentCookieIndex = 0
+        contentChildNumber = 0
+        i = 0
+        while i < gLen and currentCookieIndex < sLen:
+            if g[i] <= s[currentCookieIndex]:
+                contentChildNumber = contentChildNumber + 1
+                currentCookieIndex = currentCookieIndex + 1
+            else:
+                currentCookieIndex = currentCookieIndex + 1
+                i = i-1
+            i = i + 1
+        return contentChildNumber
+:END

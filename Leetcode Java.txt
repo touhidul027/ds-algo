@@ -140,3 +140,31 @@ class Solution {
     }
 }
 :END
+
+Category: Greedy
+---------------------
+455. Assign Cookies
+https://leetcode.com/problems/assign-cookies/
+V455.1
+START:
+class Solution {
+    public int findContentChildren(int[] g, int[] s) {
+        Arrays.sort(g);
+        Arrays.sort(s);
+        int currentCookieIndex = 0;
+        int gLen = g.length;
+        int sLen = s.length;
+        int contentChildNumber = 0;
+        for (int i = 0; i < gLen && currentCookieIndex < sLen; i++) {
+            if (g[i] <= s[currentCookieIndex]) {
+                currentCookieIndex++;
+                contentChildNumber++;
+            } else {
+                currentCookieIndex++;
+                i--;
+            }
+        }
+        return contentChildNumber;
+    }
+}
+:END

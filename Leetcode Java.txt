@@ -168,3 +168,35 @@ class Solution {
     }
 }
 :END
+
+
+Category: HashTable
+---------------------
+205. Isomorphic Strings
+https://leetcode.com/problems/isomorphic-strings/
+V205.1
+START:
+class Solution {
+    public boolean isIsomorphic(String s, String t) {
+        Map<Character, Character> sMap = new HashMap<>();
+        Map<Character, Character> tMap = new HashMap<>();
+        int len = s.length();
+        for (int i = 0; i < len; i++) {
+            char sCh = s.charAt(i);
+            char tCh = t.charAt(i);
+
+            if (sMap.containsKey(sCh)) {
+                if (tCh != sMap.get(sCh)) {
+                    return false;
+                }
+            } else if (tMap.containsKey(tCh)) {
+                return false;
+            } else {
+                sMap.put(sCh,tCh);
+                tMap.put(tCh,sCh);
+            }
+        }
+        return true;
+    }
+}
+:END

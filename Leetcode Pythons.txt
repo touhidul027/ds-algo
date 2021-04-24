@@ -99,3 +99,28 @@ class Solution:
             i = i + 1
         return contentChildNumber
 :END
+
+Category: HashTable
+---------------------
+205. Isomorphic Strings
+https://leetcode.com/problems/isomorphic-strings/
+V205.1
+START:
+class Solution:
+    def isIsomorphic(self, s: str, t: str) -> bool:
+        sMap = {}
+        tMap = {}
+        length = len(s)
+        for i in range(length):
+            sCh = s[i]
+            tCh = t[i]
+            if sCh in sMap:
+                if tCh != sMap[sCh]:
+                    return False
+            elif tCh in tMap:
+                return False
+            else:
+                sMap[sCh] = tCh
+                tMap[tCh] = sCh
+        return True
+:END

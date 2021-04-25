@@ -124,3 +124,47 @@ class Solution:
                 tMap[tCh] = sCh
         return True
 :END
+
+
+Category: Binary Search
+---------------------
+278. First Bad Version
+https://leetcode.com/problems/first-bad-version/
+V278.1 Time Limit excede
+START:
+class Solution:
+    def firstBadVersion(self, n):
+        lastGoodVersion = 0
+        lastBadVersion = n
+        while (lastBadVersion - lastGoodVersion) != 1:
+            n = lastGoodVersion + (lastBadVersion - lastGoodVersion) / 2
+            isBad = isBadVersion(n)
+            if isBad:
+                lastBadVersion = n
+            else:
+                lastGoodVersion = n
+        return lastBadVersion
+:END
+
+V278.2 Accepted
+START:
+class Solution:
+# The isBadVersion API is already defined for you.
+# @param version, an integer
+# @return an integer
+# def isBadVersion(version):
+
+class Solution:
+    def firstBadVersion(self, n):
+        left = 1
+        right = n
+        while left < right:
+            mid = left + int((right - left) / 2)
+            isBad = isBadVersion(mid)
+            if isBad:
+                right = mid
+            else:
+                left = mid + 1
+
+        return left
+:END

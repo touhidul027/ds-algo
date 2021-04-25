@@ -200,3 +200,59 @@ class Solution {
     }
 }
 :END
+
+
+Category: Binary Search
+---------------------
+278. First Bad Version
+https://leetcode.com/problems/first-bad-version/
+V278.1 Time Limit excede
+START:
+/* The isBadVersion API is defined in the parent class VersionControl.
+      boolean isBadVersion(int version); */
+
+public class Solution extends VersionControl {
+    public int firstBadVersion(int n) {
+        // 1 2 3 -4 5
+        int lastGoodVersion = 0;
+        int lastBadVersion = n;
+
+        while (lastBadVersion - lastGoodVersion != 1) {
+            n = (lastBadVersion + lastGoodVersion) / 2;
+            boolean isBad = isBadVersion(n);
+            if (isBad) {
+                lastBadVersion = n;
+            } else {
+                lastGoodVersion = n;
+            }
+        }
+        return lastBadVersion;
+    }
+}
+:END
+
+V278.2 Accepted
+START:
+/* The isBadVersion API is defined in the parent class VersionControl.
+      boolean isBadVersion(int version); */
+
+public class Solution extends VersionControl {
+   public int firstBadVersion(int n) {
+        // 1 2 3 -4 5
+        int lastGoodVersion = 0; // could not be any good version
+        int lastBadVersion = n;
+
+        while (lastBadVersion - lastGoodVersion != 1) {
+            //n = (lastBadVersion + lastGoodVersion) / 2;
+            n = lastGoodVersion + (lastBadVersion - lastGoodVersion) / 2;
+            boolean isBad = isBadVersion(n);
+            if (isBad) {
+                lastBadVersion = n;
+            } else {
+                lastGoodVersion = n;
+            }
+        }
+        return lastBadVersion;
+    }
+}
+:END

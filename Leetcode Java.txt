@@ -1,4 +1,4 @@
-Category: Maths
+Topics: Maths
 ---------------
 7. Reverse Integer
 https://leetcode.com/problems/reverse-integer/
@@ -63,7 +63,7 @@ class Solution {
     }
 }
 
-Category: Tree
+Topics: Tree
 ---------------------
 226. Invert Binary Tree
 https://leetcode.com/problems/invert-binary-tree/
@@ -98,7 +98,7 @@ class Solution {
     }
 }
 
-Category: DFS
+Topics: DFS
 ---------------------
 100. same Tree
 https://leetcode.com/problems/same-tree/
@@ -141,7 +141,7 @@ class Solution {
 }
 :END
 
-Category: Greedy
+Topics: Greedy
 ---------------------
 455. Assign Cookies
 https://leetcode.com/problems/assign-cookies/
@@ -170,7 +170,7 @@ class Solution {
 :END
 
 
-Category: HashTable
+Topics: HashTable
 ---------------------
 205. Isomorphic Strings
 https://leetcode.com/problems/isomorphic-strings/
@@ -202,7 +202,7 @@ class Solution {
 :END
 
 
-Category: Binary Search
+Topics: Binary Search
 ---------------------
 278. First Bad Version
 https://leetcode.com/problems/first-bad-version/
@@ -253,6 +253,74 @@ public class Solution extends VersionControl {
             }
         }
         return lastBadVersion;
+    }
+}
+:END
+
+Topics: Breadth-First-Search
+----------------------------
+993. Cousins in Binary Tree
+https://leetcode.com/problems/cousins-in-binary-tree/
+V993.1
+START:
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+class Solution {
+    public boolean isCousins(TreeNode root, int x, int y) {
+        Queue<TreeNode> q = new LinkedList<>();
+        q.add(root);
+        boolean executeLoop = true;
+		boolean isCousins = false;
+        while (executeLoop) {
+            int currentLevelNodesNumber = q.size();
+            if (currentLevelNodesNumber == 0) {
+                break;
+            }
+
+            for (int i = 0; i < currentLevelNodesNumber; i++) {
+                TreeNode curNode = q.remove();
+                int[] tArr = new int[2];
+                TreeNode leftNode = curNode.left;
+                if (leftNode != null) {
+                    q.add(leftNode);
+                    tArr[0] = leftNode.val;
+                }
+                TreeNode rightNode = curNode.right;
+                if (rightNode != null) {
+                    q.add(rightNode);
+                    tArr[1] = rightNode.val;
+                }
+                if (!executeLoop && this.isValueExists(tArr, x, y)) {
+                    return true;
+                } else if (this.isValueExists(tArr, x, y)) {
+                    executeLoop = false; // perform search only in this level
+                }
+            }
+        }
+        return isCousins;
+    }
+
+
+    public boolean isValueExists(int[] arr, int x, int y) {
+        for (int element : arr) {
+            if (element == x || element == y) {
+               return true;
+            }
+        }
+        return false;
     }
 }
 :END

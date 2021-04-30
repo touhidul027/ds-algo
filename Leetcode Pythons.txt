@@ -175,4 +175,47 @@ Topics: Breadth-First-Search
 https://leetcode.com/problems/cousins-in-binary-tree/
 V993.1
 START:
+# Definition for a binary tree node.
+# class TreeNode:
+#     def __init__(self, val=0, left=None, right=None):
+#         self.val = val
+#         self.left = left
+#         self.right = right
+from queue import Queue
+class Solution:
+    def isCousins(self, root: TreeNode, x: int, y: int) -> bool:
+        q = Queue(maxsize = 100)
+        q.put(root)
+        executeLoop = True
+        isCousins = False
+        while executeLoop:
+            currentLevelNodesNumber = q.qsize()
+            if currentLevelNodesNumber == 0:
+                break;
+
+            for i in range(currentLevelNodesNumber):
+                curNode = q.get();
+                tArr = [];
+
+                leftNode = curNode.left;
+                if leftNode:
+                    q.put(leftNode);
+                    tArr.append(leftNode.val)
+
+                rightNode = curNode.right;
+                if rightNode:
+                    q.put(rightNode);
+                    tArr.append(rightNode.val)
+
+                if executeLoop == False and self.isValueExists(tArr, x, y):
+                    return True;
+                elif self.isValueExists(tArr, x, y):
+                    executeLoop = False; # perform search only in this level
+        return isCousins
+
+    def isValueExists(self, tArr: List, x: int, y: int) -> bool:
+        for num in tArr:
+            if num == x or num == y:
+                return True;
+        return False
 :END

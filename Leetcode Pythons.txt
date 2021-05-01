@@ -259,3 +259,18 @@ class Solution:
                 tempSum = nums[i]
         return max(maxSum,tempSum)
 :END
+
+Topics: Backtracking
+----------------------------
+1688. Count of Matches in Tournament
+https://leetcode.com/problems/count-of-matches-in-tournament/
+V1688.1
+START:
+class Solution:
+    def numberOfMatches(self, n: int) -> int:
+        if n == 1:
+            return 0
+        elif n == 2:
+            return 1
+        return 1 + self.numberOfMatches(n-1)
+:END

@@ -374,3 +374,21 @@ class Solution {
     }
 }
 :END
+
+Topics: Backtracking
+----------------------------
+1688. Count of Matches in Tournament
+https://leetcode.com/problems/count-of-matches-in-tournament/
+V1688.1
+START:
+class Solution {
+    public int numberOfMatches(int n) {
+        if (n == 1) {
+            return 0;
+        } else if (n == 2) {
+            return 1;
+        }
+        return 1 + numberOfMatches(n-1);
+    }
+}
+:END

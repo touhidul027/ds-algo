@@ -238,3 +238,24 @@ class Solution:
         return ''.join(newS)
 
 :END
+
+Topics: Two Pointers
+----------------------------
+1800. Maximum Ascending Subarray Sum
+https://leetcode.com/problems/maximum-ascending-subarray-sum/
+V1800.1
+START:
+class Solution:
+    def maxAscendingSum(self, nums: List[int]) -> int:
+        maxSum = 0
+        tempSum = nums[0]
+        numsLen = len(nums)
+
+        for i in range(1, numsLen):
+            if nums[i] > nums[i-1]:
+                tempSum += nums[i]
+            else:
+                maxSum = max(maxSum,tempSum)
+                tempSum = nums[i]
+        return max(maxSum,tempSum)
+:END

@@ -344,3 +344,33 @@ class Solution {
     }
 }
 :END
+
+Topics: Two Pointers
+----------------------------
+1800. Maximum Ascending Subarray Sum
+https://leetcode.com/problems/maximum-ascending-subarray-sum/
+V1800.1
+START:
+class Solution {
+    public int maxAscendingSum(int[] nums) {
+        int maxSum = 0;
+        int tempSum = nums[0];
+        int numlen = nums.length;
+
+		for (int i = 1; i < numlen; i++) {
+            if (nums[i] > nums[i-1]) {
+                tempSum += nums[i];
+            } else {
+                if (tempSum > maxSum) {
+                    maxSum = tempSum;
+                }
+                tempSum = nums[i];
+            }
+        }
+        if (tempSum > maxSum) {
+            maxSum = tempSum;
+        }
+        return maxSum;
+    }
+}
+:END

@@ -323,4 +323,24 @@ class Solution {
         return false;
     }
 }
+V993.2 try recursively
+V993.3 try using dfs
+:END
+
+Topics: Sort
+----------------------------
+1528. Shuffle String
+https://leetcode.com/problems/shuffle-string/
+V1528.1
+START:
+class Solution {
+    public String restoreString(String s, int[] indices) {
+        int len = indices.length;
+        char[] newArr = new char[len];
+        for (int i = 0; i < len; i++) {
+            newArr[indices[i]] = s.charAt(i);
+        }
+        return String.valueOf(newArr);
+    }
+}
 :END

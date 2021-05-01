@@ -218,4 +218,23 @@ class Solution:
             if num == x or num == y:
                 return True;
         return False
+V993.2 try recursively
+V993.3 try using dfs
+:END
+
+Topics: Sort
+----------------------------
+1528. Shuffle String
+https://leetcode.com/problems/shuffle-string/
+V1528.1
+START:
+class Solution:
+    def restoreString(self, s: str, indices: List[int]) -> str:
+        length = len(indices)
+        newS = list(s)
+        for i in range(length):
+            newS[indices[i]] = s[i]
+
+        return ''.join(newS)
+
 :END

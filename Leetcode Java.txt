@@ -392,3 +392,36 @@ class Solution {
     }
 }
 :END
+
+Topics: Stack
+----------------------------
+1021. Remove Outermost Parentheses
+https://leetcode.com/problems/remove-outermost-parentheses/
+V1021.1
+START:
+class Solution {
+    public String removeOuterParentheses(String S) {
+        String sNew = "";
+        Stack<Character> stack = new Stack<>();
+        stack.push(S.charAt(0));
+        int sLen = S.length();
+        char startCh = '(';
+        char endCh = ')';
+        for (int i = 1; i < sLen; i++) {
+            char ch = S.charAt(i);
+            if (ch == startCh) {
+                if (!stack.empty()) {
+                    sNew += startCh;
+                }
+                stack.push(ch);
+            } else {
+                stack.pop();
+                if (!stack.empty()) {
+                    sNew += endCh;
+                }
+            }
+        }
+        return sNew;
+    }
+}
+:END

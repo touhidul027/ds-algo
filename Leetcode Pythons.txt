@@ -274,3 +274,30 @@ class Solution:
             return 1
         return 1 + self.numberOfMatches(n-1)
 :END
+
+Topics: Stack
+----------------------------
+1021. Remove Outermost Parentheses
+https://leetcode.com/problems/remove-outermost-parentheses/
+V1021.1
+START:
+class Solution:
+    def removeOuterParentheses(self, S: str) -> str:
+        sNew = ""
+        stack = []
+        sLen = len(S)
+        startCh = '('
+        endCh = ')'
+        stack.append(S[0])
+        for i in range(1,sLen):
+            ch = S[i]
+            if ch == startCh:
+                if len(stack) != 0:
+                    sNew += startCh
+                stack.append(ch)
+            else:
+                stack.pop()
+                if len(stack) != 0:
+                    sNew += endCh
+        return sNew
+:END

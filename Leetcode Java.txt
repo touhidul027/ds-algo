@@ -477,3 +477,30 @@ class ParkingSystem {
  */
 :END
 1603.2 try using array
+
+
+
+Topics: Bit Manipulation
+Brush Up: https://www.baeldung.com/java-bitwise-operators
+----------------------------
+1342. Number of Steps to Reduce a Number to Zero
+https://leetcode.com/problems/number-of-steps-to-reduce-a-number-to-zero/
+v-1342.1
+START:
+class Solution {
+    public int numberOfSteps(int num) {
+        int nSteps = 0;
+        while (num != 0) {
+            if ((num & 1) != 0) {
+                // substract for even
+                num--;
+            } else {
+                num = num >> 1;
+            }
+            nSteps++;
+        }
+        return nSteps;
+    }
+}
+:END
+

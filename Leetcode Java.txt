@@ -504,3 +504,61 @@ class Solution {
 }
 :END
 
+Topics: Graph
+----------------------------
+997. Find the Town Judge
+https://leetcode.com/problems/find-the-town-judge/
+v-997.1
+START:
+class Solution {
+    public int[][] prepareAdjacencyMatrix(int N, int[][] trust) {
+        /*  Example 5:
+            0	0	0	0	0	
+
+            0	-1	0	1	1	
+
+            0	0	-1	1	1	
+
+            0	0	0	0	0	
+
+            0	0	0	1	-1	
+        */
+        int[][] adjMarix = new int[N+1][N+1];
+        int rows = trust.length;
+        
+        
+        for (int i = 0; i < rows; i++) {
+            adjMarix[trust[i][0]][trust[i][0]] = -1;
+            for (int j = 1; j < trust[i].length; j++) {
+                adjMarix[trust[i][0]][trust[i][j]] = 1;
+            }
+        }
+        return adjMarix;
+    }
+
+    public int findJudge(int N, int[][] trust) {
+        int[][] adjMatrix = this.prepareAdjacencyMatrix(N,trust);
+        int judge = -1;
+        
+        // find who is not trusting anyone
+        for (int i = 1; i < N + 1; i++) {
+            if (adjMatrix[i][i] == 0) {
+                judge = i;
+                break;
+            }
+        }
+
+        if (judge != -1) {
+            // everyone must trust judge, else no judge
+            for (int i = 1; i < N + 1; i++) {
+                if (i != judge && adjMatrix[i][judge]==0) {
+                    return -1;
+                }
+            }
+        }
+
+        return judge;
+    }
+}
+:END
+

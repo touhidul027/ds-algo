@@ -363,3 +363,35 @@ class Solution:
         return nSteps
 :END
 
+Topics: Graph
+----------------------------
+997. Find the Town Judge
+https://leetcode.com/problems/find-the-town-judge/
+v-997.1
+START:
+class Solution:
+    def prepareAdjacencyMatrix(self, N: int, trust: List[List[int]]) -> List[List[int]]:
+        # arr = [[0]*cols]*rows
+        adjMatrix = [[0 for i in range(N+1)] for j in range(N+1)]
+        for i in range(len(trust)):
+            adjMatrix[trust[i][0]] [trust[i][0]] = -1;
+            for j in range(1,len(trust[i])):
+                adjMatrix[trust[i][0]] [trust[i][j]] = 1;
+        return adjMatrix
+
+    def findJudge(self, N: int, trust: List[List[int]]) -> int:
+        adjMatrix = self.prepareAdjacencyMatrix(N,trust)
+        judge = -1
+
+        for i in range(1,(N+1)):
+            if adjMatrix[i][i] == 0:
+                judge = i
+                break
+
+        if judge != -1:
+            for i in range(1,(N+1)):
+                if i != judge and adjMatrix[i][judge] == 0:
+                    return -1
+        return judge;
+:END
+v-997.2 Review

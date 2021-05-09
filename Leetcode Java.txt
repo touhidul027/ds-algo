@@ -562,3 +562,75 @@ class Solution {
 }
 :END
 v-997.2 Review
+
+
+Topics: Heap
+----------------------------
+1046. Last Stone Weight
+https://leetcode.com/problems/last-stone-weight/
+v-1046.1
+START:
+class Solution {
+    private static int currentItems = 0;
+
+    public static int[] heapArray(int[] stones) {
+        int[] heapArray = new int[stones.length];
+
+        // sorting array
+        for (int i = 0; i < stones.length; i++) {
+            heapArray = insertAsHeapArray(heapArray,stones[i]);
+            System.out.println(Arrays.toString(heapArray));
+        }
+       // System.out.println(Arrays.toString(heapArray));
+        return heapArray;
+    }
+
+    public static int[] insertAsHeapArray(int[] arr, int element) {
+        // finding right place to insert element
+        int index = currentItems;
+
+        for (int i = 0; i < currentItems; i++) {
+            if (arr[i] > element) {
+                index = i;
+                break;
+            }
+        }
+
+        // trickle up the rest of array elements
+        currentItems++;
+        for (int i = currentItems -1; i > index ; i--) {
+            arr[i] = arr[i-1];
+        }
+
+        // insert element in right place
+        arr[index] = element;
+
+        return arr;
+    }
+
+    public static int remove(int[] arr) {
+        if (currentItems == 0) {
+            return 0;
+        }
+        return arr[--currentItems];
+    }
+
+    public static boolean isLast() {
+        return currentItems == 1;
+    }
+
+    public int lastStoneWeight(int[] stones) {
+        int[] heapArray = heapArray(stones);
+        while (currentItems > 1) {
+            int larger = remove(heapArray);
+            int smaller = remove(heapArray);
+            if (larger - smaller > 0) {
+                insertAsHeapArray(heapArray, larger-smaller);
+            }
+        }
+        return remove(heapArray);
+    }
+}
+:END
+v-1046.2 use built in PriorityQ library class
+

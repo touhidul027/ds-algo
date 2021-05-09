@@ -395,3 +395,66 @@ class Solution:
         return judge;
 :END
 v-997.2 Review
+
+
+Topics: Heap
+----------------------------
+1046. Last Stone Weight
+https://leetcode.com/problems/last-stone-weight/
+v-1046.1
+START:
+class Solution:
+    currentItems = 0
+
+    @staticmethod
+    def heapArray(stones: List[int]) -> List[int]:
+        heapArray = [0 for i in range(len(stones))];
+
+        # sorting array
+        for i in range(len(stones)):
+            heapArray = Solution.insertAsHeapArray(heapArray, stones[i]);
+
+        return heapArray
+
+    @staticmethod
+    def insertAsHeapArray(arr: List[int], element: int) -> List[int]:
+        # finding right place to insert element
+        index = Solution.currentItems
+
+        for i in range(Solution.currentItems):
+            if arr[i] > element:
+                index = i
+                break
+
+        # trickle up the rest of array elements
+        Solution.currentItems = Solution.currentItems + 1
+        for i in range(Solution.currentItems -1, index, -1):
+            arr[i] = arr[i-1]
+
+        # insert element in right place
+        arr[index] = element
+        return arr
+
+    @staticmethod
+    def remove(arr: List[int]) -> int:
+        if Solution.currentItems == 0:
+            return 0
+        Solution.currentItems = Solution.currentItems - 1
+        return arr[Solution.currentItems]
+
+    @staticmethod
+    def isLast() -> bool:
+        return Solution.currentItems == 1
+
+    def lastStoneWeight(self, stones: List[int]) -> int:
+        heapArr = Solution.heapArray(stones)
+        while Solution.currentItems > 1:
+            larger = Solution.remove(heapArr)
+            smaller = Solution.remove(heapArr)
+            if (larger - smaller) > 0:
+                Solution.insertAsHeapArray(heapArr, larger-smaller)
+
+        return Solution.remove(heapArr)
+:END
+v-1046.2 use built in PriorityQ library class
+

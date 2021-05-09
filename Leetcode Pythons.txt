@@ -458,3 +458,25 @@ class Solution:
 :END
 v-1046.2 use built in PriorityQ library class
 
+
+Topics: Linked List
+----------------------------
+876. Middle of the Linked List
+https://leetcode.com/problems/middle-of-the-linked-list/
+v-876.1
+START:
+# Definition for singly-linked list.
+# class ListNode:
+#     def __init__(self, val=0, next=None):
+#         self.val = val
+#         self.next = next
+class Solution:
+    def middleNode(self, head: ListNode) -> ListNode:
+        mid = head
+        jumper = head
+
+        while jumper and jumper.next:
+            mid = mid.next
+            jumper = jumper.next.next
+        return mid
+:END

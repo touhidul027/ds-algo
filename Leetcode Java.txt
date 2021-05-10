@@ -664,3 +664,29 @@ class Solution {
 }
 :END
 
+Topics: Recursion
+----------------------------
+1137. N-th Tribonacci Number
+https://leetcode.com/problems/n-th-tribonacci-number/
+v-1137.1
+START:
+class Solution {
+    private Map<Integer,Integer> map = new HashMap<>();
+    public int tribonacci(int n) {
+        if (n < 3) {
+            if (n == 0) {
+                return 0;
+            } else if(n == 1 || n == 2) {
+                return 1;
+            }
+        }
+
+        if (!map.containsKey(n)) {
+            map.put(n, this.tribonacci(n - 1) +  this.tribonacci(n - 2) + this.tribonacci(n - 3));
+        }
+
+        return map.get(n);
+    }
+}
+:END
+v-1137.2 Try without recursion

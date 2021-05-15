@@ -503,3 +503,57 @@ class Solution:
         return Solution.map.get(n)
 :END
 v-1137.2 Try without recursion
+
+Topics: Union Find
+----------------------------
+1584. Min Cost to Connect All Points
+https://leetcode.com/problems/min-cost-to-connect-all-points/
+v-1584.1 MST algorithm using Prims
+START:
+import sys
+
+class Solution:
+    def minCostConnectPoints(self, points: List[List[int]]) -> int:
+        nPoints = len(points)
+        edgeWeigth = [sys.maxsize for i in range(nPoints)]
+        isInMST = [False for i in range(nPoints)]
+
+        # setting starting point at 0
+        edgeWeigth[0] = 0;
+
+        for i in range(nPoints):
+            # i = 0, u is the first element
+            u = Solution.nextVertex(nPoints, edgeWeigth, isInMST)
+            if u == -1:
+                break
+
+            isInMST[u] = True
+            sourceX = points[u][0]
+            sourceY = points[u][1]
+            for v in range(nPoints):
+                desX = points[v][0]
+                desY = points[v][1]
+                distance = abs(sourceX - desX) + abs(sourceY - desY)
+                if u != v and isInMST[v] == False and distance < edgeWeigth[v]:
+                    edgeWeigth[v] = distance
+
+        # calculate cost
+        minCost = 0
+        for i in range(nPoints):
+            minCost += edgeWeigth[i]
+
+        return minCost
+
+    @staticmethod
+    def nextVertex(nPoints: int, edgeWeigth: List[int], inMST: List[bool]) -> int:
+        min = sys.maxsize
+        vertexIndex = -1
+
+        for v in range(nPoints):
+            if inMST[v] == False and edgeWeigth[v] < min:
+                min = edgeWeigth[v]
+                vertexIndex = v
+
+        return vertexIndex;
+:END
+v-1584.2 MST algorithm using Krushkals

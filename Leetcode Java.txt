@@ -690,3 +690,83 @@ class Solution {
 }
 :END
 v-1137.2 Try without recursion
+
+Topics: Union Find
+----------------------------
+1584. Min Cost to Connect All Points
+https://leetcode.com/problems/min-cost-to-connect-all-points/
+v-1584.1 MST algorithm using Prims
+START:
+package solution;
+
+import java.util.Arrays;
+
+public class Solution {
+    /**
+     *  using minimum spanning tree - prims algorithm
+     * @param points
+     * @return
+     */
+    public int minCostConnectPoints(int[][] points) {
+        int nPoints = points.length;
+        int[] edgeWeigth = new int[nPoints];
+        boolean[] isInMST = new boolean[nPoints];
+        for (int i = 0; i < nPoints; i++) {
+            isInMST[i] = false;
+            edgeWeigth[i] = Integer.MAX_VALUE;
+        }
+
+        // setting starting point at 0
+        edgeWeigth[0] = 0;
+
+        for (int i = 0; i < nPoints; i++) {
+            // i = 0, u is the first element
+            int u = Solution.nextVertex(nPoints, edgeWeigth, isInMST);
+            if (u == -1) {
+                break;
+            }
+            isInMST[u] = true;
+            int sourceX = points[u][0];
+            int sourceY = points[u][1];
+            for (int v = 0; v < nPoints; v++) {
+                int desX = points[v][0];
+                int desY = points[v][1];
+                int distance = Math.abs(sourceX - desX) + Math.abs(sourceY - desY);
+                if (u != v && isInMST[v] == false && distance < edgeWeigth[v]) {
+                    edgeWeigth[v] = distance;
+                }
+            }
+        }
+
+        // calculate cost
+        int minCost = 0;
+        for (int i = 0; i < nPoints; i++) {
+            minCost += edgeWeigth[i];
+        }
+
+        return minCost;
+    }
+
+    private static int nextVertex(int nPoints, int[] edgeWeigth, boolean[] inMST) {
+        int min = Integer.MAX_VALUE, vertexIndex = -1;
+
+        for (int v = 0; v < nPoints; v++) {
+            if (inMST[v] == false && edgeWeigth[v] < min) {
+                min = edgeWeigth[v];
+                vertexIndex = v;
+            }
+        }
+        return vertexIndex;
+    }
+
+    public static void mainBackup(String[] args) {
+        // TODO code application logic here
+        int[][] points = {{11, -6}, {9, -19}, {16, -13}, {4, -9}, {20, 4}, {20, 7}, {-9, 18}, {10, -15}, {-15, 3}, {6, 6}};
+        Solution s = new Solution();
+        int cost = s.minCostConnectPoints(points);
+        System.out.println(cost);
+    }
+}
+
+:END
+v-1584.2 MST algorithm using Krushkals

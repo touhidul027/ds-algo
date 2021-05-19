@@ -557,3 +557,52 @@ class Solution:
         return vertexIndex;
 :END
 v-1584.2 MST algorithm using Krushkals
+
+
+Topics: Sliding Window
+----------------------------
+1052. Grumpy Bookstore Owner
+https://leetcode.com/problems/grumpy-bookstore-owner/
+v-1052.1
+START:
+class Solution:
+    def maxSatisfied(self, customers: List[int], grumpy: List[int], minutes: int) -> int:
+        satisfiedCustomer = 0
+        currentSum = self.getGrumpyCustomer(customers, grumpy, 0, minutes)
+        maxSum = currentSum
+        lenCustomers = len(customers)
+        secretTechniqueStartingIndex = 0
+
+        for i in range(lenCustomers):
+            if grumpy[i] == 0:
+                satisfiedCustomer += customers[i]
+
+        # finding max only grumpy customers window
+        for i in range(1, lenCustomers - minutes + 1):
+            if grumpy[i - 1] == 1:
+                currentSum -= customers[i - 1]
+
+            if grumpy[i + minutes - 1] == 1:
+                currentSum += customers[i + minutes - 1]
+
+            if currentSum > maxSum:
+                secretTechniqueStartingIndex = i
+                maxSum = currentSum
+
+        # add sliding windows secret ideas extra customer
+        for i in range(secretTechniqueStartingIndex, (secretTechniqueStartingIndex + minutes)):
+            if (i < lenCustomers) and grumpy[i] == 1:
+                satisfiedCustomer += customers[i]
+
+        return satisfiedCustomer;
+
+    def getGrumpyCustomer(self, customers: List[int], grumpy: List[int], startIndex: int, endIndex: int) -> int:
+        sum = 0
+
+        for i in range(startIndex, endIndex):
+            if i < len(grumpy) and grumpy[i] == 1:
+                sum += customers[i]
+
+        return sum;
+:END
+v-1052.2 //satisfiedCustomer += maxSum;

@@ -283,3 +283,166 @@ public class MainDriver {
     }
 }
 :END
+
+
+Program 2: Trie
+package main;
+
+// ref: https://www.geeksforgeeks.org/trie-insert-and-search/
+// Implementation of Trie data structure
+class Node {
+
+    private Node[] childs;
+    private boolean isEndOfWord;
+    private char label;
+
+    public Node() {
+        this.childs = new Node[26]; //working with a-z characters
+        this.isEndOfWord = false;
+        for (int i = 0; i < 26; i++) {
+            this.childs[i] = null;
+        }
+    }
+
+    public Node(char ch) {
+        this();
+        this.label = ch;
+    }
+
+    public Node[] getChilds() {
+        return this.childs;
+    }
+
+    public char getLabel() {
+        return this.label;
+    }
+
+    public boolean isIsEndOfWord() {
+        return this.isEndOfWord;
+    }
+
+    public void setIsEndOfWord(boolean isEndOfWord) {
+        this.isEndOfWord = isEndOfWord;
+    }
+}
+
+class Trie {
+
+    private Node root;
+
+    public Trie() {
+        this.root = new Node();
+    }
+
+    public void insert(String str) {
+        Node current = this.root;
+        for (int i = 0; i < str.length(); i++) {
+            char ch = str.charAt(i);
+            Node n = this.getCharNode(current, ch);
+            if (n == null) {
+                // times to add characters
+                current = this.insertChar(current, ch);
+            } else {
+                current = n;
+            }
+        }
+        current.setIsEndOfWord(true);
+    }
+
+    public boolean isExist(String str) {
+        Node current = this.root;
+        for (int i = 0; i < str.length(); i++) {
+            char ch = str.charAt(i);
+            current = this.getCharNode(current, ch);
+            if (current == null) {
+                return false;
+            }
+            //System.out.print(current.getLabel() + ",");
+        }
+        //System.out.println();
+        return current.isIsEndOfWord();
+    }
+
+    public boolean isExistBackup(String str) {
+        Node current = this.root;
+        for (int i = 0; i < str.length(); i++) {
+            char ch = str.charAt(i);
+            Node n = this.getCharNode(current, ch);
+            if (n != null) {
+                System.out.print(n.getLabel() + ",");
+                current = n;
+            }
+        }
+        System.out.println();
+        return current.isIsEndOfWord();
+    }
+
+    /**
+     * if char is present in current childs then return the child node
+     *
+     * @param current searching for ch node of its childs
+     * @param ch
+     * @return
+     */
+    private Node getCharNode(Node current, char ch) {
+        int nodeIndex = this.generateNodeIndex(ch);
+        return current.getChilds()[nodeIndex];
+    }
+
+    private Node insertChar(Node current, char ch) {
+        int nodeIndex = this.generateNodeIndex(ch);
+        current.getChilds()[nodeIndex] = new Node(ch);
+        return current.getChilds()[nodeIndex];
+    }
+
+    private int generateNodeIndex(char ch) {
+        return (int) ch - 97;
+    }
+}
+
+public class Main {
+
+    public static void main(String[] args) {
+        // Input keys (use only 'a' through 'z' and lower case)
+        String keys[] = {"the", "a", "there", "answer", "any",
+            "by", "bye", "their"};
+        String output[] = {"Not present in trie", "Present in trie"};
+
+        Trie trie = new Trie();
+
+        for (int i = 0; i < keys.length; i++) {
+            trie.insert(keys[i]);
+        }
+
+        // Search for different keys
+        if (trie.isExist("the") == true) {
+            System.out.println("the --- " + output[1]);
+        } else {
+            System.out.println("the --- " + output[0]);
+        }
+
+        if (trie.isExist("these") == true) {
+            System.out.println("these --- " + output[1]);
+        } else {
+            System.out.println("these --- " + output[0]);
+        }
+
+        if (trie.isExist("their") == true) {
+            System.out.println("their --- " + output[1]);
+        } else {
+            System.out.println("their --- " + output[0]);
+        }
+
+        if (trie.isExist("thaw") == true) {
+            System.out.println("thaw --- " + output[1]);
+        } else {
+            System.out.println("thaw --- " + output[0]);
+        }
+    }
+}
+
+Output:
+the --- Present in trie
+these --- Not present in trie
+their --- Present in trie
+thaw --- Not present in trie

@@ -833,3 +833,155 @@ class Solution {
 }
 :END
 v-1052.2 //satisfiedCustomer += maxSum;
+
+
+Topics: Trie
+----------------------------
+720. Longest Word in Dictionary
+https://leetcode.com/problems/longest-word-in-dictionary/
+v-720.1
+START:
+class Node {
+
+    private Node[] childs;
+    private boolean isEndOfWord;
+    private char label;
+
+    public Node() {
+        this.childs = new Node[26]; //working with a-z characters
+        this.isEndOfWord = false;
+        for (int i = 0; i < 26; i++) {
+            this.childs[i] = null;
+        }
+    }
+
+    public Node(char ch) {
+        this();
+        this.label = ch;
+    }
+
+    public Node[] getChilds() {
+        return this.childs;
+    }
+
+    public char getLabel() {
+        return this.label;
+    }
+
+    public boolean isIsEndOfWord() {
+        return this.isEndOfWord;
+    }
+
+    public void setIsEndOfWord(boolean isEndOfWord) {
+        this.isEndOfWord = isEndOfWord;
+    }
+}
+
+class Trie {
+
+    private Node root;
+
+    public Trie() {
+        this.root = new Node();
+    }
+
+    public void insert(String str) {
+        Node current = this.root;
+        for (int i = 0; i < str.length(); i++) {
+            char ch = str.charAt(i);
+            Node n = this.getCharNode(current, ch);
+            if (n == null) {
+                // times to add characters
+                current = this.insertChar(current, ch);
+            } else {
+                current = n;
+            }
+        }
+        current.setIsEndOfWord(true);
+    }
+
+    public boolean isExist(String str) {
+        Node current = this.root;
+        for (int i = 0; i < str.length(); i++) {
+            char ch = str.charAt(i);
+            current = this.getCharNode(current, ch);
+            if (current == null) {
+                return false;
+            }
+            //System.out.print(current.getLabel() + ",");
+        }
+        //System.out.println();
+        return current.isIsEndOfWord();
+    }
+
+   public boolean isIncrementalWord(String str) {
+        Node current = this.root;
+        for (int i = 0; i < str.length(); i++) {
+            char ch = str.charAt(i);
+            current = this.getCharNode(current, ch);
+            if (current == null || !current.isIsEndOfWord()) {
+                return false;
+            }
+            //System.out.print(current.getLabel() + ",");
+        }
+        //System.out.println();
+        return current.isIsEndOfWord();
+    }
+
+    /**
+     * if char is present in current childs then return the child node
+     *
+     * @param current searching for ch node of its childs
+     * @param ch
+     * @return
+     */
+    private Node getCharNode(Node current, char ch) {
+        int nodeIndex = this.generateNodeIndex(ch);
+        return current.getChilds()[nodeIndex];
+    }
+
+    private Node insertChar(Node current, char ch) {
+        int nodeIndex = this.generateNodeIndex(ch);
+        current.getChilds()[nodeIndex] = new Node(ch);
+        return current.getChilds()[nodeIndex];
+    }
+
+    private int generateNodeIndex(char ch) {
+        return (int) ch - 97;
+    }
+}
+
+class Solution {
+    public String longestWord(String[] words) {
+        Trie trie = new Trie();
+        Arrays.sort(words, Comparator.comparingInt(String::length));
+        for (int i = 0; i < words.length; i++) {
+            trie.insert(words[i]);
+        }
+        String longestStr = "";
+        for (int i = words.length - 1; i >= 0; i--) {
+            String str = words[i];
+            //System.out.println(str);
+            if (str.length() >= longestStr.length() && trie.isIncrementalWord(str)) {
+                //System.out.println(longestStr + " " + str + " com-> " + longestStr.compareTo(str));
+                if (longestStr.compareTo(str) > 0 || longestStr.isEmpty()) {
+                    longestStr = str;
+                }
+            }
+        }
+        return longestStr;
+    }
+}
+// input: ["vsw","vs","zwu","vsx","nc","o","vswus","orv","imf","i","v","zw","vs"]
+:END
+v-720.2 Use HashMap/HashSet
+
+
+Topics: Divide and Conquer
+----------------------------
+169. Majority Element
+Tags: [Arrays, Divide and Conquer, Bit Manipulation]
+https://leetcode.com/problems/majority-element/
+v-169.1
+START:
+:END

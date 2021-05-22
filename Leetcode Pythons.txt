@@ -606,3 +606,24 @@ class Solution:
         return sum;
 :END
 v-1052.2 //satisfiedCustomer += maxSum;
+
+
+Topics: Trie
+----------------------------
+720. Longest Word in Dictionary
+https://leetcode.com/problems/longest-word-in-dictionary/
+v-720.1
+START:
+// solution made in java, in python not now: build trie using built in class
+:END
+v-720.2 Use HashMap/HashSet
+
+
+Topics: Divide and Conquer
+----------------------------
+169. Majority Element
+Tags: [Arrays, Divide and Conquer, Bit Manipulation]
+https://leetcode.com/problems/majority-element/
+v-169.1
+START:
+:END

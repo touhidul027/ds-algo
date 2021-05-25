@@ -982,6 +982,64 @@ Topics: Divide and Conquer
 169. Majority Element
 Tags: [Arrays, Divide and Conquer, Bit Manipulation]
 https://leetcode.com/problems/majority-element/
-v-169.1
+v-169.1 Divide and Conquer
+START:
+public class Solution {
+
+    private Map<Integer, Integer> counting = new HashMap<>();
+
+    public int majorityElement(int[] nums) {
+        return this.recMajorityElement(nums, 0, nums.length - 1);
+    }
+
+    private int recMajorityElement(int[] nums, int start, int end) {
+        if (start == end) {
+            // incrementing number count
+            if (this.counting.containsKey(nums[start])) {
+                this.counting.put(nums[start], this.counting.get(nums[start]) + 1);
+            } else {
+                this.counting.put(nums[start], 1);
+            }
+
+            return nums[start];
+        }
+        int mid = start + (end - start) / 2;
+        int left = this.recMajorityElement(nums, start, mid);
+        int right = this.recMajorityElement(nums, mid + 1, end);
+        int number = 0;
+        if (left == right) {
+            number = left;
+        } else {
+            int leftCount = 0;
+            if (this.counting.containsKey(left)) {
+                leftCount = this.counting.get(left);
+            }
+            int rightCount = 0;
+            if (this.counting.containsKey(right)) {
+                rightCount = this.counting.get(right);
+            }
+            if (leftCount > rightCount) {
+                number = left;
+            } else if (rightCount > leftCount) {
+                number = right;
+            }
+        }
+
+        return number;
+    }
+}
+:END
+
+v-169.2 Boyer Moore Majority Vote Algorithm
+v-169.3 hashmap -> hint: add element and count, if major immediately return
+v-169.4 Bit Manipulation
+
+
+Topics: Segment Tree
+----------------------------
+307. Range Sum Query - Mutable
+Tags: [Binary index Tree, Segment Tree]
+https://leetcode.com/problems/range-sum-query-mutable/
+v-307.1 Segment Tree
 START:
 :END

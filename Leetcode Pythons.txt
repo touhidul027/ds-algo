@@ -624,6 +624,59 @@ Topics: Divide and Conquer
 169. Majority Element
 Tags: [Arrays, Divide and Conquer, Bit Manipulation]
 https://leetcode.com/problems/majority-element/
-v-169.1
+v-169.1 Divide and Conquer
+START:
+class Solution:
+    
+    counting = {}
+
+    def majorityElement(self, nums: List[int]) -> int:
+        return self.recMajorityElement(nums, 0, len(nums) - 1)
+
+    def recMajorityElement(self, nums: List[int], start: int, end: int) -> int:
+        if start == end:
+            # incrementing number count
+            if nums[start] in Solution.counting:
+                Solution.counting[nums[start]] = Solution.counting.get(nums[start]) + 1
+            else:
+                Solution.counting[nums[start]] =  1
+            return nums[start]
+
+        mid = start + int((end - start) / 2)
+        left = self.recMajorityElement(nums, start, mid)
+        right = self.recMajorityElement(nums, mid + 1, end)
+        number = 0
+        if left == right:
+            number = left
+        else:
+            leftCount = 0
+            if left in Solution.counting:
+                leftCount = Solution.counting.get(left)
+
+            rightCount = 0
+            if right in Solution.counting:
+                rightCount = Solution.counting.get(right)
+
+            if leftCount > rightCount:
+                number = left
+            elif rightCount > leftCount:
+                number = right
+
+        return number
+:END
+Exception: [-1,100,2,100,100,4,100]
+Accepted but submission wrong answer
+
+v-169.2 Boyer Moore Majority Vote Algorithm
+v-169.3 hashmap -> hint: add element and count, if major immediately return
+v-169.4 Bit Manipulation
+
+
+Topics: Segment Tree
+----------------------------
+307. Range Sum Query - Mutable
+Tags: [Binary index Tree, Segment Tree]
+https://leetcode.com/problems/range-sum-query-mutable/
+v-307.1 Segment Tree
 START:
 :END

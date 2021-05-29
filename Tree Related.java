@@ -446,3 +446,128 @@ the --- Present in trie
 these --- Not present in trie
 their --- Present in trie
 thaw --- Not present in trie
+
+Program 2: Segment Tree
+-----------------------
+START:
+// http://www.shafaetsplanet.com/?p=1557
+// https://www.geeksforgeeks.org/segment-tree-set-1-sum-of-given-range/
+package main;
+
+import java.util.Arrays;
+
+class SegmentTree {
+
+    private int segmentTree[];
+    private int arrLength = 0;
+    private int[] arr;
+
+    public void buildTree(int[] arr) {
+        this.arr = arr;
+        int len = arr.length * 3;
+        this.arrLength = arr.length;
+        this.segmentTree = new int[len];//java, all cells default value is 0
+        this.recBuildTree(arr, 0, 0, arr.length - 1);
+    }
+
+    private int recBuildTree(int[] arr, int currentNode, int leftNodeIndex, int rightNodeIndex) {
+        if (leftNodeIndex == rightNodeIndex) {
+            this.segmentTree[currentNode] = arr[leftNodeIndex];
+            return arr[leftNodeIndex];
+        }
+        int midIndex = leftNodeIndex + (rightNodeIndex - leftNodeIndex) / 2;
+        int leftNode = currentNode * 2 + 1;
+        int rightNode = currentNode * 2 + 2;
+        int leftSideSum = this.recBuildTree(arr, leftNode, leftNodeIndex, midIndex);
+        int rightSideSum = this.recBuildTree(arr, rightNode, midIndex + 1, rightNodeIndex);
+        return this.segmentTree[currentNode] = leftSideSum + rightSideSum;
+    }
+
+    public int query(int rangeIndex1, int rangeIndex2) {
+        // checking whether range 
+        int leftTreeIndex = 0;
+        int rightTreeIndex = this.arrLength - 1;
+        int currentNode = 0;
+        int sum = this.recQuery(rangeIndex1, rangeIndex2, currentNode, leftTreeIndex, rightTreeIndex);
+        System.out.println("Sum: " + sum);
+        return sum;
+    }
+
+    void displayTree() {
+        System.out.println(Arrays.toString(this.segmentTree));
+    }
+
+    private int recQuery(int rangeIndex1, int rangeIndex2, int currentNode, int leftTreeIndex, int rightTreeIndex) {
+        // range check query
+        if (rangeIndex1 > rightTreeIndex || rangeIndex2 < leftTreeIndex) {
+            return 0;
+        } else if ((rangeIndex1 <= leftTreeIndex) && (rightTreeIndex <= rangeIndex2)) {
+            return this.segmentTree[currentNode];
+        }
+        int midIndex = leftTreeIndex + (rightTreeIndex - leftTreeIndex) / 2;
+        int leftNode = currentNode * 2 + 1;
+        int rightNode = currentNode * 2 + 2;
+        int leftSum = this.recQuery(rangeIndex1, rangeIndex2, leftNode, leftTreeIndex, midIndex);
+        int rightSum = this.recQuery(rangeIndex1, rangeIndex2, rightNode, midIndex + 1, rightTreeIndex);
+        return leftSum + rightSum;
+    }
+
+    public void updateValue(int index, int value) {
+        int oldValue = this.arr[index];
+        this.arr[index] = value;
+        int diff = value - oldValue;
+        int leftIndex = 0;
+        int rightIndex = this.arrLength - 1;
+        this.recUpdate(this.segmentTree, 0, index, diff, leftIndex, rightIndex);
+    }
+
+    /**
+     * updating node at backtracking time(bottom to up time). We can also add
+     * before going to call recursive function(top to bottom time)
+     *
+     * @param segmentTree
+     * @param currentNode
+     * @param updateIndex
+     * @param diff - adding this in each eligible node
+     * @param leftIndex
+     * @param rightIndex
+     */
+    private void recUpdate(int[] segmentTree, int currentNode, int updateIndex, int diff, int leftIndex, int rightIndex) {
+        if (leftIndex == rightIndex && updateIndex == leftIndex) {
+            this.segmentTree[currentNode] = this.segmentTree[currentNode] + diff;
+            return;
+        }
+
+        if (updateIndex < leftIndex || rightIndex < updateIndex) {
+            return;
+        }
+        int midIndex = leftIndex + (rightIndex - leftIndex) / 2;
+        int leftNode = currentNode * 2 + 1;
+        int rightNode = currentNode * 2 + 2;
+        this.recUpdate(segmentTree, leftNode, updateIndex, diff, leftIndex, midIndex);
+        this.recUpdate(segmentTree, rightNode, updateIndex, diff, midIndex + 1, rightIndex);
+        this.segmentTree[currentNode] = this.segmentTree[currentNode] + diff;
+    }
+}
+
+public class Main {
+
+    public static void main(String[] args) {
+        int arr[] = {1, 3, 5, 7, 9, 11};
+        //int arr[] = {1, 2};
+        System.out.println(Arrays.toString(arr));
+        SegmentTree st = new SegmentTree();
+        st.buildTree(arr);
+        st.displayTree();
+        st.query(1, 3);
+        st.updateValue(1, 2);
+        st.query(1, 3);
+    }
+}
+output:
+[1, 3, 5, 7, 9, 11]
+[36, 9, 27, 4, 5, 16, 11, 1, 3, 0, 0, 7, 9, 0, 0, 0, 0, 0]
+Sum: 15
+Sum: 14
+BUILD SUCCESSFUL (total time: 0 seconds)
+:END

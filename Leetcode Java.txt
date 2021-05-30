@@ -1042,4 +1042,104 @@ Tags: [Binary index Tree, Segment Tree]
 https://leetcode.com/problems/range-sum-query-mutable/
 v-307.1 Segment Tree
 START:
+class NumArray {
+    private int segmentTree[];
+    private int arrLength = 0;
+    private int[] arr;
+
+    public NumArray(int[] nums) {
+        this.arr = nums;
+        int len = nums.length * 3;
+        this.arrLength = nums.length;
+        this.segmentTree = new int[len];//java, all cells default value is 0
+        this.recBuildTree(this.arr, 0, 0, this.arrLength - 1);
+    }
+
+    private int recBuildTree(int[] arr, int currentNode, int leftNodeIndex, int rightNodeIndex) {
+        if (leftNodeIndex == rightNodeIndex) {
+            this.segmentTree[currentNode] = arr[leftNodeIndex];
+            return arr[leftNodeIndex];
+        }
+        int midIndex = leftNodeIndex + (rightNodeIndex - leftNodeIndex) / 2;
+        int leftNode = currentNode * 2 + 1;
+        int rightNode = currentNode * 2 + 2;
+        int leftSideSum = this.recBuildTree(arr, leftNode, leftNodeIndex, midIndex);
+        int rightSideSum = this.recBuildTree(arr, rightNode, midIndex + 1, rightNodeIndex);
+        return this.segmentTree[currentNode] = leftSideSum + rightSideSum;
+    }
+
+    public void update(int index, int val) {
+        int oldValue = this.arr[index];
+        this.arr[index] = val;
+        int diff = val - oldValue;
+        int leftIndex = 0;
+        int rightIndex = this.arrLength - 1;
+        this.recUpdate(this.segmentTree, 0, index, diff, leftIndex, rightIndex);
+    }
+    
+    private void recUpdate(int[] segmentTree, int currentNode, int updateIndex, int diff, int leftIndex, int rightIndex) {
+        if (leftIndex == rightIndex && updateIndex == leftIndex) {
+            this.segmentTree[currentNode] = this.segmentTree[currentNode] + diff;
+            return;
+        }
+
+        if (updateIndex < leftIndex || rightIndex < updateIndex) {
+            return;
+        }
+        int midIndex = leftIndex + (rightIndex - leftIndex) / 2;
+        int leftNode = currentNode * 2 + 1;
+        int rightNode = currentNode * 2 + 2;
+        this.recUpdate(segmentTree, leftNode, updateIndex, diff, leftIndex, midIndex);
+        this.recUpdate(segmentTree, rightNode, updateIndex, diff, midIndex + 1, rightIndex);
+        this.segmentTree[currentNode] = this.segmentTree[currentNode] + diff;
+    }
+
+    public int sumRange(int left, int right) {
+        return this.query(left, right);
+    }
+
+    private int query(int rangeIndex1, int rangeIndex2) {
+        // checking whether range 
+        int leftTreeIndex = 0;
+        int rightTreeIndex = this.arrLength - 1;
+        int currentNode = 0;
+        int sum = this.recQuery(rangeIndex1, rangeIndex2, currentNode, leftTreeIndex, rightTreeIndex);
+        //System.out.println("Sum: " + sum);
+        return sum;
+    }
+    
+    private int recQuery(int rangeIndex1, int rangeIndex2, int currentNode, int leftTreeIndex, int rightTreeIndex) {
+        // range check query
+        if (rangeIndex1 > rightTreeIndex || rangeIndex2 < leftTreeIndex) {
+            return 0;
+        } else if ((rangeIndex1 <= leftTreeIndex) && (rightTreeIndex <= rangeIndex2)) {
+            return this.segmentTree[currentNode];
+        }
+        int midIndex = leftTreeIndex + (rightTreeIndex - leftTreeIndex) / 2;
+        int leftNode = currentNode * 2 + 1;
+        int rightNode = currentNode * 2 + 2;
+        int leftSum = this.recQuery(rangeIndex1, rangeIndex2, leftNode, leftTreeIndex, midIndex);
+        int rightSum = this.recQuery(rangeIndex1, rangeIndex2, rightNode, midIndex + 1, rightTreeIndex);
+        return leftSum + rightSum;
+    }
+    
+}
+
+/**
+ * Your NumArray object will be instantiated and called as such:
+ * NumArray obj = new NumArray(nums);
+ * obj.update(index,val);
+ * int param_2 = obj.sumRange(left,right);
+ */
+:END
+v-307.2 Binary Indexed Tree
+
+
+Topics: Ordered Map
+-------------------
+846. Hand of Straights
+Tags: [Ordered Map]
+https://leetcode.com/problems/hand-of-straights/
+v-846.1
+START:
 :END

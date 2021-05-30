@@ -679,4 +679,14 @@ Tags: [Binary index Tree, Segment Tree]
 https://leetcode.com/problems/range-sum-query-mutable/
 v-307.1 Segment Tree
 START:
+NA - exact Segment Tree implementation. Solved only Java
+:END
+
+Topics: Ordered Map
+-------------------
+846. Hand of Straights
+Tags: [Ordered Map]
+https://leetcode.com/problems/hand-of-straights/
+v-846.1
+START:
 :END

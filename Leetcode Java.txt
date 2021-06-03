@@ -1140,6 +1140,72 @@ Topics: Ordered Map
 846. Hand of Straights
 Tags: [Ordered Map]
 https://leetcode.com/problems/hand-of-straights/
-v-846.1
+v-846.1 TreeMap
 START:
+class Solution {
+    public boolean isNStraightHand(int[] hand, int groupSize) {
+        // primary numbering check
+        if (hand.length % groupSize != 0) {
+            return false;
+        }
+
+        TreeMap<Integer, Integer> tree_map = new TreeMap<Integer, Integer>();
+        for (int i = 0; i < hand.length; i++) {
+            int counter = 0;
+            if (tree_map.containsKey(hand[i])) {
+                counter = tree_map.get(hand[i]);
+            }
+            counter = counter + 1;
+            tree_map.put(hand[i], counter);
+        }
+
+        while (true) {
+            tree_map = this.test(tree_map, groupSize);
+            if (tree_map == null) {
+                return false;
+            } else if (tree_map.size() == 0) {
+                break;
+            }
+        }
+        return true;
+    }
+
+    private TreeMap<Integer, Integer> test(TreeMap<Integer, Integer> tree_map, int groupSize) {
+        int[] removeKey = new int[groupSize];
+        int rNum = 0;
+        for (Map.Entry<Integer, Integer> map : tree_map.entrySet()) {
+            int key = map.getKey();
+            int keyCounter = map.getValue();
+            if (keyCounter == 1) {
+                removeKey[rNum] = key;
+                rNum++;
+            } else {
+                tree_map.put(key, keyCounter - 1);
+            }
+            int nextKey = key + 1;
+            for (int i = 1; i < groupSize; i++) {
+
+                if (tree_map.containsKey(nextKey)) {
+                    keyCounter = tree_map.get(nextKey);
+                    if (keyCounter == 1) {
+                        removeKey[rNum] = nextKey;
+                        rNum++;
+                    } else {
+                        tree_map.put(nextKey, keyCounter - 1);
+                    }
+                } else {
+                    return null;
+                }
+                nextKey++;
+            }
+            break;
+        }
+
+        // update tree_map
+        for (int i = 0; i < rNum; i++) {
+            tree_map.remove(removeKey[i]);
+        }
+        return tree_map;
+    }
+}
 :END

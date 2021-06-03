@@ -689,4 +689,62 @@ Tags: [Ordered Map]
 https://leetcode.com/problems/hand-of-straights/
 v-846.1
 START:
+    from sortedcontainers import SortedDict
+class Solution:
+    def isNStraightHand(self, hand: List[int], groupSize: int) -> bool:
+         # primary numbering check
+        if (len(hand) % groupSize) != 0:
+            return False
+
+        tree_map = {}
+        for i in range(len(hand)):
+            counter = 0
+            if hand[i] in tree_map:
+                counter = tree_map[hand[i]]
+            counter = counter + 1
+            tree_map[hand[i]] = counter
+
+        tree_map = SortedDict(tree_map)
+        while (True):
+            tree_map = self.test(tree_map, groupSize)
+            if tree_map is None:
+                return False
+            elif (len(tree_map) == 0):
+                break
+        return True
+
+    def test(self, tree_map:List,  groupSize: int) -> List:
+        removeKey = [0 for i in range(groupSize)]
+        rNum = 0
+
+        for key in tree_map:
+            keyCounter = tree_map[key]
+            if keyCounter == 1:
+                removeKey[rNum] = key
+                rNum = rNum + 1
+            else:
+                tree_map[key] = keyCounter - 1
+
+            nextKey = key + 1
+
+            for i in range(1, groupSize):
+                if nextKey in tree_map:
+                    keyCounter = tree_map[nextKey]
+                    if (keyCounter == 1):
+                        removeKey[rNum] = nextKey
+                        rNum = rNum + 1
+                    else:
+                        tree_map[nextKey] = keyCounter - 1
+                else:
+                    return None
+
+                nextKey = nextKey + 1
+
+            break
+
+        # update tree_map
+        for i in range(rNum):
+            tree_map.pop(removeKey[i])
+
+        return tree_map
 :END

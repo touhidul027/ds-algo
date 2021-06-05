@@ -748,3 +748,43 @@ class Solution:
 
         return tree_map
 :END
+
+Topics: Queue
+----------------------
+933. Number of Recent Calls
+Tags: []
+https://leetcode.com/problems/number-of-recent-calls/
+v-933.1 Time Limit Excede
+START:
+class RecentCounter:
+    def __init__(self):
+        self.counters = [0 for i in range(10000)]
+        self.startIndex = 0;
+        self.curIndex = -1;
+
+    def ping(self, t: int) -> int:
+        self.curIndex = self.curIndex + 1
+        self.counters[self.curIndex] = t
+        startCounterValue = t - 3000
+        while (self.counters[self.startIndex] < startCounterValue and self.startIndex <= self.curIndex):
+            self.startIndex = self.startIndex
+
+        counter = self.curIndex - self.startIndex + 1
+        return counter;
+
+# Your RecentCounter object will be instantiated and called as such:
+# obj = RecentCounter()
+# param_1 = obj.ping(t)
+:END
+v-933.2 (Solution) Use dequeue
+v-933.3 (SolutionDiscussion) Array with Binary Search
+
+
+Topics: Geometry
+----------------------
+1266. Minimum Time Visiting All Points
+Tags: [Array, Geometry]
+https://leetcode.com/problems/minimum-time-visiting-all-points/
+v-1266.1
+START:
+:END

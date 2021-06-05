@@ -1209,3 +1209,52 @@ class Solution {
     }
 }
 :END
+
+Topics: Queue
+----------------------
+933. Number of Recent Calls
+Tags: []
+https://leetcode.com/problems/number-of-recent-calls/
+v-933.1 Accepted
+START:
+class RecentCounter {
+    private int[] counters;
+    private int startIndex;
+    private int curIndex;
+
+    public RecentCounter() {
+        this.counters = new int[10000];
+        this.startIndex = 0;
+        this.curIndex = -1;
+    }
+
+    public int ping(int t) {
+        this.curIndex++;
+        this.counters[this.curIndex] = t;
+        int startCounterValue = t - 3000;
+        while (this.counters[this.startIndex] < startCounterValue && this.startIndex <= this.curIndex) {
+            this.startIndex++;
+        }
+        int counter = this.curIndex - this.startIndex + 1;
+        return counter;
+    }
+}
+
+/**
+ * Your RecentCounter object will be instantiated and called as such:
+ * RecentCounter obj = new RecentCounter();
+ * int param_1 = obj.ping(t);
+ */
+ :END
+ v-933.2 (Solution) Use LinkedList
+ v-933.3 (SolutionDiscussion) Array with Binary Search
+
+
+Topics: Geometry
+----------------------
+1266. Minimum Time Visiting All Points
+Tags: [Array, Geometry]
+https://leetcode.com/problems/minimum-time-visiting-all-points/
+v-1266.1
+START:
+:END

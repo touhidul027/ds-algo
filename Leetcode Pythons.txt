@@ -788,3 +788,13 @@ https://leetcode.com/problems/minimum-time-visiting-all-points/
 v-1266.1
 START:
 :END
+
+
+Topics: Line Sweep
+----------------------
+1288. Remove Covered Intervals
+Tags: [Greedy, Sort, Line Sweep]
+https://leetcode.com/problems/remove-covered-intervals/
+v-1288.1 Line Sweep
+START:
+:END

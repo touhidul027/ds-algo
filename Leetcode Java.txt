@@ -1257,4 +1257,35 @@ Tags: [Array, Geometry]
 https://leetcode.com/problems/minimum-time-visiting-all-points/
 v-1266.1
 START:
+class Solution {
+    public int minTimeToVisitAllPoints(int[][] points) {
+        int totalDistance = 0;
+        int srcX = points[0][0];
+        int srcY = points[0][1];
+        for(int i = 1; i< points.length; i++) {
+            int desX  = points[i][0];
+            int desY = points[i][1];
+            int diffX = Math.abs(srcX - desX);
+            int diffY = Math.abs(srcY - desY);
+            int minDif = Math.min(diffX,diffY);
+            if (minDif == 0) {
+                minDif = Math.max(diffX,diffY);
+            }
+            totalDistance += minDif + Math.max(diffX,diffY) - minDif; // rethink
+            //totalDistance += Math.max(diffX,diffY); // enough
+            srcX = desX;
+            srcY = desY;
+        }
+        return totalDistance;
+    }
+}
+:END
+
+Topics: Line Sweep
+----------------------
+1288. Remove Covered Intervals
+Tags: [Greedy, Sort, Line Sweep]
+https://leetcode.com/problems/remove-covered-intervals/
+v-1288.1 Line Sweep
+START:
 :END

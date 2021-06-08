@@ -1286,6 +1286,37 @@ Topics: Line Sweep
 1288. Remove Covered Intervals
 Tags: [Greedy, Sort, Line Sweep]
 https://leetcode.com/problems/remove-covered-intervals/
-v-1288.1 Line Sweep
+v-1288.1 Brute Force
 START:
+class Solution {
+    public int removeCoveredIntervals(int[][] intervals) {
+        int totalIntervals = intervals.length;
+        int[] coveredIntervals = new int[intervals.length];
+
+        for (int i = 0; i < intervals.length; i++) {
+            if (coveredIntervals[i] == 1) {
+                continue;
+            }
+            int c = intervals[i][0];
+            int d = intervals[i][1];
+            for (int j = i + 1; j < intervals.length; j++) {
+                if (coveredIntervals[j] == 1) {
+                    continue;
+                }
+                int a = intervals[j][0];
+                int b = intervals[j][1];
+
+                if (c <= a && b <= d) {
+                    coveredIntervals[j] = 1;
+                    totalIntervals--;
+                } else if (a <= c && d <= b) {
+                    coveredIntervals[i] = 1;
+                    totalIntervals--;
+                    break;
+                }
+            }
+        }
+        return totalIntervals;
+    }
+}
 :END

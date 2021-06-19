@@ -571,3 +571,120 @@ Sum: 15
 Sum: 14
 BUILD SUCCESSFUL (total time: 0 seconds)
 :END
+
+
+Program 3: Binary Index Tree/ Fenwick Tree
+------------------------------------------
+START:
+package solution;
+
+import java.util.Arrays;
+
+/**
+ * explanation http://www.shafaetsplanet.com/?p=1961 code help:
+ * https://www.geeksforgeeks.org/binary-indexed-tree-or-fenwick-tree-2/
+ *
+ * @author touhidul027
+ */
+public class BinaryIndexTree {
+
+    private int[] arr;
+    private int[] biTreeArr;
+
+    public BinaryIndexTree(int[] arr) {
+        System.out.println("Arrays:" + Arrays.toString(arr));
+        this.arr = new int[arr.length];
+        this.biTreeArr = new int[this.arr.length + 1];// all elements value is 0
+        this.buildBinaryIndexedTree(arr);
+    }
+
+    private void buildBinaryIndexedTree(int[] arr) {
+        System.out.println("Preparing BI tree");
+        for (int i = 0; i < this.arr.length; i++) {
+            this.updateBinaryIndexedTree(this.arr.length, i, arr[i]);
+        }
+    }
+
+    private void updateBinaryIndexedTree(int n, int index, int val) {
+        //update original array first
+        this.arr[index] += val;
+
+        index = index + 1;
+        // Traverse all ancestors and add 'val'
+        while (index <= n) {
+            // Add 'val' to current node of BIT Tree
+            this.biTreeArr[index] += val;
+            // assign child index
+            index += index & (-index);
+        }
+    }
+
+    int getSum(int index) {
+        System.out.println("++++getSum++++ index=" + index);
+        System.out.println("BI Array:" + Arrays.toString(this.biTreeArr));
+        int sum = 0;
+
+        // index in this.biTreeArr[] is 1 more than the index in arr[]
+        index = index + 1;
+
+        // Traverse ancestors of this.biTreeArr[index]
+        while (index > 0) {
+            System.out.print("indx:" + index + ", ");
+            sum += this.biTreeArr[index];
+            // assign child index
+            index -= index & (-index);
+        }
+        System.out.println("\nSum :" + sum);
+        System.out.println("---- getSum ----");
+        return sum;
+    }
+
+    //computing the sum of a range
+    public int getSum(int startIndex, int endIndex) {
+        System.out.println("++++ rangeSum +++++");
+        int rangeSum = (this.getSum(endIndex) - this.getSum(startIndex - 1));
+        System.out.println("Range-Sum: " + rangeSum);
+        System.out.println("--- rangeSum ---");
+        return rangeSum;
+    }
+
+    public static void main(String args[]) {
+        int arr[] = {2, 1, 1, 3, 2, 3, 4, 5, 6, 7, 8, 9};
+        int n = arr.length;
+        BinaryIndexTree tree = new BinaryIndexTree(arr);
+        tree.getSum(11); // 51
+        tree.updateBinaryIndexedTree(n, 5, 1);
+        tree.getSum(11); // 52
+
+        tree.getSum(10, 11);//17
+    }
+}
+
+run:
+Arrays:[2, 1, 1, 3, 2, 3, 4, 5, 6, 7, 8, 9]
+Preparing BI tree
+++++getSum++++ index=11
+BI Array:[0, 2, 3, 1, 7, 2, 5, 4, 21, 6, 13, 8, 30]
+indx:12, indx:8, 
+Sum :51
+---- getSum ----
+++++getSum++++ index=11
+BI Array:[0, 2, 3, 1, 7, 2, 6, 4, 22, 6, 13, 8, 30]
+indx:12, indx:8, 
+Sum :52
+---- getSum ----
+++++ rangeSum +++++
+++++getSum++++ index=11
+BI Array:[0, 2, 3, 1, 7, 2, 6, 4, 22, 6, 13, 8, 30]
+indx:12, indx:8, 
+Sum :52
+---- getSum ----
+++++getSum++++ index=9
+BI Array:[0, 2, 3, 1, 7, 2, 6, 4, 22, 6, 13, 8, 30]
+indx:10, indx:8, 
+Sum :35
+---- getSum ----
+Range-Sum: 17
+--- rangeSum ---
+BUILD SUCCESSFUL (total time: 0 seconds)
+:END

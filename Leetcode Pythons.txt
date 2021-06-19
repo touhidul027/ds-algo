@@ -825,3 +825,14 @@ class Solution:
 
         return totalIntervals
 :END
+v-1288.2 sort
+
+
+Topics: Binary Indexed Tree
+---------------------------
+315. Count of Smaller Numbers After Self
+Tags: [Greedy, Sort, Line Sweep]
+https://leetcode.com/problems/remove-covered-intervals/
+v-315.1
+START:
+:END

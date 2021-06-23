@@ -1458,3 +1458,51 @@ https://leetcode.com/problems/remove-covered-intervals/
 v-315.1 FAILS
 START:
 :END
+
+Topics: Brain Teasures
+----------------------
+521. Longest Uncommon Subsequence I
+Tags:[brain Teasures, String]
+https://leetcode.com/problems/longest-uncommon-subsequence-i/
+v-521.1
+START:
+class Solution {
+    public int findLUSlength(String a, String b) {
+        int aLen = a.length();
+        int bLen = b.length();
+        int maxUncommonSubSequence = 0;
+        if (aLen == bLen) {
+            if (a.equals(b)) {
+                maxUncommonSubSequence = -1;
+            } else {
+                maxUncommonSubSequence = aLen;
+            }
+        } else {
+            maxUncommonSubSequence = Math.max(aLen,bLen);
+        }
+        return maxUncommonSubSequence;
+    }
+}
+:END
+
+v-521.2
+START:
+class Solution {
+    public int findLUSlength(String a, String b) {
+        if (a.equals(b)) {
+            return -1;
+        } 
+        return Math.max(a.length(), b.length());
+    }
+}
+:END
+v-521.3 Brute force idea by generating all subsequence
+
+
+Topics :Topological Sort
+207. Course Schedule
+Tags:[Breadth First Search, DFS, Graph, Topological Sort]
+https://leetcode.com/problems/course-schedule/
+v-207.1
+START:
+:END

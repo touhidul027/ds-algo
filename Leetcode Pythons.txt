@@ -836,3 +836,26 @@ https://leetcode.com/problems/remove-covered-intervals/
 v-315.1
 START:
 :END
+
+Topics: Brain Teasures
+----------------------
+521. Longest Uncommon Subsequence I
+Tags:[brain Teasures, String]
+https://leetcode.com/problems/longest-uncommon-subsequence-i/
+v-521.2
+START:
+class Solution:
+    def findLUSlength(self, a: str, b: str) -> int:
+        if a == b:
+            return -1
+        return max(len(a),len(b))
+:END
+
+
+Topics :Topological Sort
+207. Course Schedule
+Tags:[Breadth First Search, DFS, Graph, Topological Sort]
+https://leetcode.com/problems/course-schedule/
+v-207.1
+START:
+:END

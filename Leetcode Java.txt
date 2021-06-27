@@ -1692,3 +1692,43 @@ class Solution {
 }
 
 :END
+
+Topics: Data Stream
+------------------------
+1656. Design an Ordered Stream
+Tags:[Array, HashTable, Design, Data Stream]
+https://leetcode.com/problems/design-an-ordered-stream/
+v-1656.1 Standard
+START:
+class OrderedStream {
+    private int ptr;
+    private String[] strArr;
+
+    public OrderedStream(int n) {
+        ptr = 1;
+        strArr = new String[n + 2]; 
+    }
+
+    public List<String> insert(int idKey, String value) {
+        this.strArr[idKey] = value;
+        return this.getChunkList();
+    }
+
+    // get continuation items
+    private List<String> getChunkList() {
+        List<String> chunks = new ArrayList<>();
+        while (this.strArr[this.ptr] != null) {
+            chunks.add(this.strArr[this.ptr]);
+            this.ptr++;
+        }
+        return chunks;
+    }
+}
+
+/**
+ * Your OrderedStream object will be instantiated and called as such:
+ * OrderedStream obj = new OrderedStream(n);
+ * List<String> param_1 = obj.insert(idKey,value);
+ */
+:END
+

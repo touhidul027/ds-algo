@@ -1758,3 +1758,40 @@ class Solution {
 :END
 v-1455.2 Trie
 
+
+Topics: Enumeration
+------------------------
+1534. Count Good Triplets
+Tags:[Array, Enumeration]
+https://leetcode.com/problems/count-good-triplets/
+v-1534.1 Brute Force
+START:
+class Solution {
+    public int countGoodTriplets(int[] arr, int a, int b, int c) {
+        int counter = 0;
+
+        for (int i = 0; i < arr.length; i++) {
+            for (int j = i + 1; j < arr.length; j++) {
+                for (int k = j + 1; k < arr.length; k++) {
+                    int tripletsFactor1 = Math.abs(arr[i] - arr[j]);
+                    int tripletsFactor2 = Math.abs(arr[j] - arr[k]);
+                    int tripletsFactor3 = Math.abs(arr[i] - arr[k]);
+                    if (tripletsFactor1 <= a && tripletsFactor2 <= b && tripletsFactor3 <= c) {
+                        counter++;
+                    }
+                }
+            }
+        }
+        return counter;
+    }
+}
+:END
+
+Topics: Reservoir Sampling
+------------------------
+398. Random Pick Index
+Tags:[HashTable, Math, Reservoir Sampling, Randomized]
+https://leetcode.com/problems/random-pick-index/
+v-398.1 Reservoir Sampling
+START:
+:END

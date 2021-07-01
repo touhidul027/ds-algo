@@ -859,3 +859,26 @@ https://leetcode.com/problems/course-schedule/
 v-207.1
 START:
 :END
+
+Topics: Enumeration
+------------------------
+1534. Count Good Triplets
+Tags:[Array, Enumeration]
+https://leetcode.com/problems/count-good-triplets/
+v-1534.1 Brute Force
+START:
+class Solution:
+    def countGoodTriplets(self, arr: List[int], a: int, b: int, c: int) -> int:
+        counter = 0
+
+        for i in range(len(arr)):
+            for j in range(i + 1, len(arr)):
+                for k in range(j + 1, len(arr)):
+                    tripletsFactor1 = abs(arr[i] - arr[j])
+                    tripletsFactor2 = abs(arr[j] - arr[k])
+                    tripletsFactor3 = abs(arr[i] - arr[k])
+                    if tripletsFactor1 <= a and tripletsFactor2 <= b and tripletsFactor3 <= c:
+                        counter = counter + 1
+        return counter
+:END
+

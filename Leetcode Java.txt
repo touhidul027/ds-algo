@@ -1792,6 +1792,33 @@ Topics: Reservoir Sampling
 398. Random Pick Index
 Tags:[HashTable, Math, Reservoir Sampling, Randomized]
 https://leetcode.com/problems/random-pick-index/
-v-398.1 Reservoir Sampling
+v-398.1 Standard Randomized
 START:
+class Solution {
+    private int[] nums;
+    private Random random;
+    private int arrLen;
+    public Solution(int[] nums) {
+        this.nums = nums;
+        this.arrLen = nums.length;
+        this.random = new Random();
+    }
+
+    public int pick(int target) {
+        while (true) {
+            int index = this.random.nextInt(arrLen);
+            if (this.nums[index] == target) {
+                return index;
+            }
+        }
+    }
+}
+
+/**
+ * Your Solution object will be instantiated and called as such:
+ * Solution obj = new Solution(nums);
+ * int param_1 = obj.pick(target);
+ */
 :END
+v-398.2 Precompute in a hashmap
+v-398.3 Reservoir Sampling

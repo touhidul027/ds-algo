@@ -447,7 +447,9 @@ these --- Not present in trie
 their --- Present in trie
 thaw --- Not present in trie
 
-Program 2: Segment Tree
+Future1: Compress Trie / Suffix Tree
+
+Program 3: Segment Tree
 -----------------------
 START:
 // http://www.shafaetsplanet.com/?p=1557
@@ -573,7 +575,7 @@ BUILD SUCCESSFUL (total time: 0 seconds)
 :END
 
 
-Program 3: Binary Index Tree/ Fenwick Tree
+Program 4: Binary Index Tree/ Fenwick Tree
 ------------------------------------------
 START:
 package solution;

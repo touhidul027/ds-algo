@@ -1822,3 +1822,22 @@ class Solution {
 :END
 v-398.2 Precompute in a hashmap
 v-398.3 Reservoir Sampling
+
+
+Topics: Suffix Array
+------------------------
+1044 Longest Duplicate Substring
+Tags:[Suffix Array,]
+https://leetcode.com/tag/suffix-array/
+v-1044.1 Standard Randomized
+START:
+:END
+
+Topics: Eulerian Circuit
+------------------------
+332 Reconstruct Itinerary
+Tags:[DFS,Graph, Eulerian Circuit]
+https://leetcode.com/problems/reconstruct-itinerary/
+v-332.1
+START:
+:END

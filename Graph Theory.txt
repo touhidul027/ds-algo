@@ -1544,3 +1544,170 @@ public class TopoLogicalSort {
     }
 }
 :END
+
+Program 6: Eulerian cycle
+// ref: https://www.geeksforgeeks.org/eulerian-path-and-circuit/
+START:
+package solution;
+
+class EulerianState {
+
+    public static final String EULERIAN_CYCLE = "Eulerian Cycle Exist";
+    public static final String EULERIAN_PATH = "Eulerian Path Exist";
+    public static final String NOT_EULERIAN = "Graph Not Eulerian";
+
+}
+// directed graph used
+public class Eulerian {
+
+    private int[][] adjMat;
+    private int nVerts;
+    private String eulerianState;
+    private boolean[] traversed;
+
+    public Eulerian(int nVerts) {
+        this.adjMat = new int[nVerts][nVerts];
+        this.nVerts = nVerts;
+        this.eulerianState = EulerianState.NOT_EULERIAN;
+        this.traversed = new boolean[nVerts];
+    }
+
+    public void addEdge(int u, int v) {
+        this.adjMat[u][v] = 1;
+        this.adjMat[v][u] = 1;
+    }
+
+    public void displayEulerianPath() {
+        // is no edge exist
+        if (!isEdgeExistInGraph()) {
+            this.eulerianState = EulerianState.EULERIAN_CYCLE;
+            System.out.println(this.eulerianState);
+            return;
+        }
+        // assuming it is a eulerian path exists
+        //this.eulerianState = EulerianState.EULERIAN_PATH;
+
+        // dfs: is all the vertices can be connected by not lifting pen
+        int startVertexIndex = 0;
+        this.dfs(startVertexIndex);
+        if (!this.unvisitableEdgeExists()) {
+            // unvisited vertex, it has unvisitable edge
+            System.out.println(this.eulerianState);
+            return;
+        }
+
+        // all the vertex is visited
+        // now a graph could have eulerian path/cycle
+        int oddDegreeVertexCounter = this.oddDegreeVertex();
+        if (oddDegreeVertexCounter > 2) {
+            System.out.println(this.eulerianState);
+        } else if (oddDegreeVertexCounter == 2) {
+            this.eulerianState = EulerianState.EULERIAN_PATH;
+            System.out.println(this.eulerianState);
+        } else if (oddDegreeVertexCounter == 0) {
+            this.eulerianState = EulerianState.EULERIAN_CYCLE;
+            System.out.println(this.eulerianState);
+        }
+
+    }
+
+    private boolean unvisitableEdgeExists() {
+        // possible that non-zero degree vertex edge is unvisited
+        for (int i = 0; i < this.nVerts; i++) {
+            // unvisited vertex
+            if (!this.traversed[i]) {
+                // any edge exist
+                for (int j = 0; j < this.nVerts; j++) {
+                    if (this.adjMat[i][j] == 1) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    private void dfs(int vertex) {
+        this.traversed[vertex] = true;
+        //iterate through all the edges outgoing from vertex V;
+        for (int endVertex = 0; endVertex < this.nVerts; endVertex++) {
+            if (!this.traversed[vertex] && this.adjMat[vertex][endVertex] == 1) {
+                this.dfs(endVertex);
+            }
+        }
+    }
+
+    private boolean isEdgeExistInGraph() {
+        for (int u = 0; u < this.nVerts; u++) {
+            for (int v = 0; v < this.nVerts; v++) {
+                if (this.adjMat[u][v] == 1) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private int oddDegreeVertex() {
+        int odd = 0;
+        for (int i = 0; i < this.nVerts; i++) {
+            int degree = 0;
+            for (int j = 0; j < this.nVerts; j++) {
+                if (this.adjMat[i][j] == 1) {
+                    degree++;
+                }
+            }
+            // odd degree
+            if (degree % 2 == 1) {
+                odd++;
+            }
+        }
+        return odd;
+    }
+
+    public static void main(String[] args) {
+        Eulerian g1 = new Eulerian(5);
+        g1.addEdge(1, 0);
+        g1.addEdge(0, 2);
+        g1.addEdge(2, 1);
+        g1.addEdge(0, 3);
+        g1.addEdge(3, 4);
+        g1.displayEulerianPath();
+
+        Eulerian g2 = new Eulerian(5);
+        g2.addEdge(1, 0);
+        g2.addEdge(0, 2);
+        g2.addEdge(2, 1);
+        g2.addEdge(0, 3);
+        g2.addEdge(3, 4);
+        g2.addEdge(4, 0);
+        g2.displayEulerianPath();
+
+        Eulerian g3 = new Eulerian(5);
+        g3.addEdge(1, 0);
+        g3.addEdge(0, 2);
+        g3.addEdge(2, 1);
+        g3.addEdge(0, 3);
+        g3.addEdge(3, 4);
+        g3.addEdge(1, 3);
+        g3.displayEulerianPath();
+
+        // Let us create a graph with 3 vertices
+        // connected in the form of cycle
+        Eulerian g4 = new Eulerian(3);
+        g4.addEdge(0, 1);
+        g4.addEdge(1, 2);
+        g4.addEdge(2, 0);
+        g4.displayEulerianPath();
+        
+        Eulerian g5 = new Eulerian(3);
+        g5.displayEulerianPath();
+    }
+}
+Output:
+Eulerian Path Exist
+Eulerian Cycle Exist
+Graph Not Eulerian
+Eulerian Cycle Exist
+Eulerian Cycle Exist
+:END

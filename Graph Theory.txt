@@ -1548,7 +1548,11 @@ public class TopoLogicalSort {
 Program 6: Eulerian cycle
 // ref: https://www.geeksforgeeks.org/eulerian-path-and-circuit/
 START:
+// ref: https://www.geeksforgeeks.org/eulerian-path-and-circuit/
 package solution;
+
+import java.util.ArrayList;
+import java.util.List;
 
 class EulerianState {
 
@@ -1558,18 +1562,21 @@ class EulerianState {
 
 }
 // directed graph used
+
 public class Eulerian {
 
     private int[][] adjMat;
     private int nVerts;
     private String eulerianState;
     private boolean[] traversed;
+    private List<Integer> paths;
 
     public Eulerian(int nVerts) {
         this.adjMat = new int[nVerts][nVerts];
         this.nVerts = nVerts;
         this.eulerianState = EulerianState.NOT_EULERIAN;
         this.traversed = new boolean[nVerts];
+        this.paths = new ArrayList<>();
     }
 
     public void addEdge(int u, int v) {
@@ -1590,7 +1597,7 @@ public class Eulerian {
         // dfs: is all the vertices can be connected by not lifting pen
         int startVertexIndex = 0;
         this.dfs(startVertexIndex);
-        if (!this.unvisitableEdgeExists()) {
+        if (this.unvisitableEdgeExists()) {
             // unvisited vertex, it has unvisitable edge
             System.out.println(this.eulerianState);
             return;
@@ -1604,9 +1611,11 @@ public class Eulerian {
         } else if (oddDegreeVertexCounter == 2) {
             this.eulerianState = EulerianState.EULERIAN_PATH;
             System.out.println(this.eulerianState);
+            System.out.println("Path->" + this.paths.toString());
         } else if (oddDegreeVertexCounter == 0) {
             this.eulerianState = EulerianState.EULERIAN_CYCLE;
             System.out.println(this.eulerianState);
+            System.out.println("Path->" + this.paths.toString());
         }
 
     }
@@ -1628,10 +1637,12 @@ public class Eulerian {
     }
 
     private void dfs(int vertex) {
+        //System.out.println(vertex);
+        this.paths.add(vertex);
         this.traversed[vertex] = true;
         //iterate through all the edges outgoing from vertex V;
         for (int endVertex = 0; endVertex < this.nVerts; endVertex++) {
-            if (!this.traversed[vertex] && this.adjMat[vertex][endVertex] == 1) {
+            if (!this.traversed[endVertex] && this.adjMat[vertex][endVertex] == 1) {
                 this.dfs(endVertex);
             }
         }
@@ -1673,7 +1684,7 @@ public class Eulerian {
         g1.addEdge(0, 3);
         g1.addEdge(3, 4);
         g1.displayEulerianPath();
-
+        
         Eulerian g2 = new Eulerian(5);
         g2.addEdge(1, 0);
         g2.addEdge(0, 2);
@@ -1699,15 +1710,19 @@ public class Eulerian {
         g4.addEdge(1, 2);
         g4.addEdge(2, 0);
         g4.displayEulerianPath();
-        
+
         Eulerian g5 = new Eulerian(3);
         g5.displayEulerianPath();
+         
     }
 }
 Output:
 Eulerian Path Exist
+Path->[0, 1, 2, 3, 4]
 Eulerian Cycle Exist
+Path->[0, 1, 2, 3, 4]
 Graph Not Eulerian
 Eulerian Cycle Exist
+Path->[0, 1, 2]
 Eulerian Cycle Exist
 :END

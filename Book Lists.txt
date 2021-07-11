@@ -1,0 +1,13 @@
+Data Structures & Algorithms
+----------------------------
+*Data Structured and Algorithms in Java
+*Introduction to Algorithms
+The Art of Computer Programming
+*Algorithms in a nutshell
+*The Algorithm Design Manual
+*Algorithms unlocked
+Algorithms by Sedgewick and Wayne
+Grokking Algorithms by Aditya Bhargava
+Introduction to Algorithms: A Creative Approach
+The Design and Analysis of Algorithms
+Trees In Data Structure

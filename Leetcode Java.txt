@@ -1831,6 +1831,7 @@ Tags:[Suffix Array,]
 https://leetcode.com/tag/suffix-array/
 v-1044.1 Standard Randomized
 START:
+IN Progress
 :END
 
 Topics: Eulerian Circuit
@@ -1840,4 +1841,5 @@ Tags:[DFS,Graph, Eulerian Circuit]
 https://leetcode.com/problems/reconstruct-itinerary/
 v-332.1
 START:
+IN Progress: Learn Eulerian Cycle of Directed Graph
 :END

@@ -1843,3 +1843,18 @@ v-332.1
 START:
 IN Progress: Learn Eulerian Cycle of Directed Graph
 :END
+
+Topics: Radix Sort
+------------------------
+912. Sort an Array
+Tags:[Sort]
+https://leetcode.com/problems/sort-an-array/
+v-912.1
+START:
+class Solution {
+    public int[] sortArray(int[] arr) {
+        Arrays.sort(arr);
+        return arr;
+    }
+}
+:END

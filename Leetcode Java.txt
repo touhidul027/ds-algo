@@ -1858,3 +1858,13 @@ class Solution {
     }
 }
 :END
+
+Topics: Rejection Sampling
+470. Implement Rand10() Using Rand7()
+https://leetcode.com/problems/implement-rand10-using-rand7/
+IN Progress
+
+Topics: Strongly Connected Component
+1489. Find Critical and Pseudo-Critical Edges in Minimum Spanning Tree
+https://leetcode.com/problems/find-critical-and-pseudo-critical-edges-in-minimum-spanning-tree/
+In Progress

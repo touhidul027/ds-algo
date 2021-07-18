@@ -1434,6 +1434,7 @@ class Graph {
         vertexList[nVerts++] = new Vertex(lab);
     }
 
+    // directed graph
     public void addEdge(int start, int end) {
         adjMat[start][end] = 1;
     }
@@ -1725,4 +1726,126 @@ Graph Not Eulerian
 Eulerian Cycle Exist
 Path->[0, 1, 2]
 Eulerian Cycle Exist
+:END
+
+Program 7: Strongly connected Components - kosaraju's algorithm
+Reference {
+    idea: http://www.shafaetsplanet.com/?p=2531
+}
+START:
+package solution;
+
+import java.util.Arrays;
+import java.util.Stack;
+
+public class StronglyConnectedComponents {
+
+    private Stack<Integer> stack;
+    private int[][] adjMat;
+    private int nVerts;
+    private int[][] transposeMat;
+    private boolean[] isVisitedFlagForAdjMat;
+    private boolean[] isVisitedFlagForTransposeMat;
+
+    public StronglyConnectedComponents(int[][] adjMat, int nVerts) {
+        this.adjMat = adjMat;
+        this.stack = new Stack<>();
+        this.nVerts = nVerts;
+        this.isVisitedFlagForAdjMat = new boolean[nVerts];
+        Arrays.fill(this.isVisitedFlagForAdjMat, false);
+        this.isVisitedFlagForTransposeMat = new boolean[nVerts];
+        Arrays.fill(this.isVisitedFlagForTransposeMat, false);
+    }
+
+    public void displayStronglyConnectedComponent() {
+        // preparing stack by first dfs util
+        for (int i = 0; i < this.nVerts; i++) {
+            if (!this.isVisitedFlagForAdjMat[i]) {
+                //System.out.println(i);
+                this.DFSUtilAdjMat(i);
+            }
+        }
+        System.out.println("Stack: " + Arrays.toString(this.stack.toArray()));
+
+        //getting transpose representation
+        this.transposeMat = this.transposeGraph();
+        //print(this.transposeMat);
+
+        while (!this.stack.isEmpty()) {
+            int vertexIndex = this.stack.pop();
+            if (!this.isVisitedFlagForTransposeMat[vertexIndex]) {
+                System.out.println("\nComponenent:");
+                this.DFSUtilTransposeMat(vertexIndex);
+            }
+        }
+    }
+
+    private void DFSUtilAdjMat(int vertexIndex) {
+        this.isVisitedFlagForAdjMat[vertexIndex] = true;
+
+        //iterate through all the edges outgoing from vertex V;
+        for (int endVertex = 0; endVertex < this.nVerts; endVertex++) {
+            if (!this.isVisitedFlagForAdjMat[endVertex] && this.adjMat[vertexIndex][endVertex] == 1) {
+                this.DFSUtilAdjMat(endVertex);
+            }
+        }
+        this.stack.push(vertexIndex);
+    }
+
+    private void DFSUtilTransposeMat(int vertexIndex) {
+        this.isVisitedFlagForTransposeMat[vertexIndex] = true;
+
+        //iterate through all the edges outgoing from vertex V;
+        for (int endVertex = 0; endVertex < this.nVerts; endVertex++) {
+            if (!this.isVisitedFlagForTransposeMat[endVertex] && this.transposeMat[vertexIndex][endVertex] == 1) {
+                this.DFSUtilTransposeMat(endVertex);
+            }
+        }
+        System.out.print(vertexIndex + "-> ");
+    }
+
+    private int[][] transposeGraph() {
+        int[][] transposeMat = new int[this.nVerts][this.nVerts];
+        //Code to transpose a matrix
+        for (int i = 0; i < this.nVerts; i++) {
+            for (int j = 0; j < this.nVerts; j++) {
+                transposeMat[i][j] = this.adjMat[j][i];
+            }
+        }
+        return transposeMat;
+    }
+
+    public static void main(String[] args) {
+        int nVerts = 7;
+        int[][] adjMat = new int[nVerts][nVerts];// default value 0
+
+        // preparing graph
+        adjMat[0][1] = 1;
+        adjMat[1][2] = 1;
+        adjMat[2][0] = 1;
+        adjMat[2][3] = 1;
+        adjMat[3][4] = 1;
+        adjMat[4][5] = 1;
+        adjMat[5][6] = 1;
+        adjMat[6][4] = 1;
+        StronglyConnectedComponents scc = new StronglyConnectedComponents(adjMat, nVerts);
+        scc.displayStronglyConnectedComponent();
+    }
+
+    private void print(int[][] transposeMat) {
+        System.out.println("Transpose matrix");
+        for (int i = 0; i < transposeMat.length; i++) {
+            System.out.println(Arrays.toString(this.transposeMat[i]));
+        }
+    }
+}
+Output:
+Stack: [6, 5, 4, 3, 2, 1, 0]
+
+Componenent:
+1-> 2-> 0-> 
+Componenent:
+3-> 
+Componenent:
+5-> 6-> 4->
 :END
